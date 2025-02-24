@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/iv_host_profile"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@string/profile_picture"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/blue_primary"
+            app:shapeAppearanceOverlay="@style/RoundedImageView"
+            tools:src="@tools:sample/avatars" />
+
+
+        <TextView
+            android:id="@+id/tv_host_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/tv_published_at"
+            app:layout_constraintStart_toEndOf="@id/iv_host_profile"
+            app:layout_constraintTop_toTopOf="@id/iv_host_profile"
+            tools:text="Tamar Zohar" />
+
+        <TextView
+            android:id="@+id/tv_published_at"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/dark_gray"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/iv_host_profile"
+            tools:text="published at 31:25" />
+
+        <ImageView
+            android:id="@+id/iv_calendar"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_calendar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_host_profile"
+            app:tint="@color/blue_primary" />
+
+        <TextView
+            android:id="@+id/tv_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/blue_primary_dark"
+            app:layout_constraintBottom_toBottomOf="@id/iv_calendar"
+            app:layout_constraintStart_toEndOf="@id/iv_calendar"
+            app:layout_constraintTop_toTopOf="@id/iv_calendar"
+            tools:text="8.1.2025" />
+
+        <ImageView
+            android:id="@+id/iv_wave"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_wave"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_calendar"
+            app:tint="@color/blue_primary" />
+
+        <TextView
+            android:id="@+id/tv_wave_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/blue_primary_dark"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_wave"
+            app:layout_constraintStart_toEndOf="@+id/iv_wave"
+            app:layout_constraintTop_toBottomOf="@+id/iv_calendar"
+            app:layout_constraintVertical_bias="0.615"
+            tools:text="40-50 cm waves" />
+
+        <ImageView
+            android:id="@+id/wind"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="40dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_wind"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_calendar"
+            app:tint="@color/blue_primary" />
+
+        <TextView
+            android:id="@+id/tv_wind_height"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/blue_primary_dark"
+            app:layout_constraintBottom_toBottomOf="@+id/wind"
+            app:layout_constraintStart_toEndOf="@+id/wind"
+            app:layout_constraintTop_toTopOf="@+id/wind"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="40-50 cm waves" />
+
+        <TextView
+            android:id="@+id/tv_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/wind"
+            tools:text="Perfect day for all levels of surfing\nHope to see you in the water" />
+
+        <ImageView
+            android:id="@+id/iv_post_image"
+            android:layout_width="339dp"
+            android:layout_height="208dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/surfing_activity_image"
+            android:scaleType="centerCrop"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_description"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_comments"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="170dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:text="@string/comments"
+            android:textColor="@color/blue_primary_dark"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_post_image" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_participants"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="163dp"
+            android:layout_height="48dp"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:text="@string/participants"
+            android:textColor="@color/blue_primary_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_comments"
+            app:layout_constraintTop_toTopOf="@id/btn_comments" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
