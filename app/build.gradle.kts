@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.example.surf_club_android"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.surf_club_android"
