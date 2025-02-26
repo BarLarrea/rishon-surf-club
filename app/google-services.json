@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "817658106006",
+    "project_id": "surf-club-rishon-4c804",
+    "storage_bucket": "surf-club-rishon-4c804.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:817658106006:android:0d5dddf0c4bd94ecd472b7",
+        "android_client_info": {
+          "package_name": "com.example.surf_club_android"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0dPa-EogTA1EqHDEdrS1rlliWGTFlEd0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
