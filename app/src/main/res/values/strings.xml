@@ -10,4 +10,14 @@
     <string name="last_name">Last Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+    <string name="date">Date</string>
+    <string name="wave_height">Wave Height</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="description">Description</string>
+    <string name="attach_a_photo">Attach a photo</string>
+    <string name="add_and_publish">Add and publish</string>
+    <string name="save_changes">Save changes</string>
+    <string name="edit_photo">Edit Photo</string>
+    <string name="add_session">Add session</string>
+    <string name="instructors">Instructors</string>
 </resources>
