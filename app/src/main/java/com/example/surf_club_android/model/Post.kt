@@ -6,9 +6,12 @@ import androidx.room.PrimaryKey
 @Entity
 data class Post(
     @PrimaryKey val id: String,
-    val description: String,
-    val image: String,
+    val hostName: String,
+    val hostProfileImage: String,
     val date: String,
-    val userId: String,
+    val waveHeight: String,
+    val windSpeed: String,
+    val description: String,
+    val postImage: String
 
 )
