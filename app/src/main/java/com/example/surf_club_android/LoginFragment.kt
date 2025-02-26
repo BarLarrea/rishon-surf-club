@@ -48,7 +48,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun navigateToSignUp() {
-        (activity as? MainActivity)?.navigateToRegister()
+        (activity as? AuthActivity)?.navigateToRegister()
     }
 
     override fun onDestroyView() {

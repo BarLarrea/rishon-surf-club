@@ -30,7 +30,7 @@ class RegisterFragment : Fragment() {
     }
 
     private fun setupRoleDropdown() {
-        val roles = arrayOf("Student", "Teacher", "Parent", "Administrator")
+        val roles = arrayOf("מדריך", "מתנדב", "בית הלוחם ת''א", "בית הלוחם ירושלים","אקי''ם","הצעד הבא")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, roles)
         binding.actvRole.setAdapter(adapter)
     }
@@ -40,10 +40,9 @@ class RegisterFragment : Fragment() {
             registerUser()
         }
 
-        // Assuming you have a "Back to Login" button or text in your register layout
-//        binding.tvBackToLogin.setOnClickListener {
-//            navigateToLogin()
-//        }
+        binding.tvBackToLogin.setOnClickListener {
+            navigateToLogin()
+        }
     }
 
     private fun registerUser() {
@@ -63,7 +62,7 @@ class RegisterFragment : Fragment() {
     }
 
     private fun navigateToLogin() {
-        (activity as? MainActivity)?.navigateToLogin()
+        (activity as? AuthActivity)?.navigateToLogin()
     }
 
     override fun onDestroyView() {
