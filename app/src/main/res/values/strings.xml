@@ -22,4 +22,12 @@
     <string name="save_changes">Save Changes</string>
     <string name="join">Join</string>
     <string name="participant_profile_image">Participant profile image</string>
+
+    <string name="participant_count">%d Participants</string>
+    <string name="your_profile">Your profile</string>
+    <string name="team">Team:</string>
+    <string name="email_dots">Email:</string>
+    <string name="about_me">About me:</string>
+    <string name="my_sessions">My sessions</string>
+    <string name="edit_profile">Edit profile</string>
 </resources>

@@ -4,14 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginVertical="4dp"
+    android:layout_marginHorizontal="8dp"
     app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="12dp">
 
         <ImageView
             android:id="@+id/participantImageView"
@@ -30,8 +32,8 @@
             android:id="@+id/participantNameTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:textSize="18sp"
+            android:layout_marginStart="12dp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:text="Bar larrea"
             android:textColor="#757777"

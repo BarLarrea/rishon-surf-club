@@ -10,7 +10,8 @@ junitVersion = "1.1.5"
 kotlin = "1.9.22"
 material = "1.11.0"
 roomRuntime = "2.6.1"
-glide = "4.12.0"  # Add this line
+glide = "4.12.0"
+litertSupportApi = "1.1.2"  # Add this line
 
 [libraries]
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
@@ -25,7 +26,8 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }  # Add this line
-glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }  # Add this line
+glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+litert-support-api = { group = "com.google.ai.edge.litert", name = "litert-support-api", version.ref = "litertSupportApi" }  # Add this line
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
