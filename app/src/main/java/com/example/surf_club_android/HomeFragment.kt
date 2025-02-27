@@ -46,8 +46,8 @@ class HomeFragment : Fragment() {
         val dummyPosts = listOf(
             Post(
                 id = UUID.randomUUID().toString(),
-                hostName = "Tamar Zohar",
-                hostProfileImage = "https://example.com/profile1.jpg",
+                authorName = "Tamar Zohar",
+                authorImage = "https://example.com/profile1.jpg",
                 date = "8.1.2025",
                 waveHeight = "40-50 cm waves",
                 windSpeed = "10-15 km/h",
@@ -56,8 +56,8 @@ class HomeFragment : Fragment() {
             ),
             Post(
                 id = UUID.randomUUID().toString(),
-                hostName = "John Doe",
-                hostProfileImage = "https://example.com/profile2.jpg",
+                authorName = "John Doe",
+                authorImage = "https://example.com/profile2.jpg",
                 date = "10.1.2025",
                 waveHeight = "60-70 cm waves",
                 windSpeed = "5-10 km/h",
