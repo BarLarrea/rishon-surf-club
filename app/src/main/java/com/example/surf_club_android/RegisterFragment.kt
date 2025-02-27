@@ -73,15 +73,22 @@ class RegisterFragment : Fragment() {
         if (firstName.isNotBlank() && lastName.isNotBlank() && role.isNotBlank() &&
             email.isNotBlank() && password.isNotBlank()) {
 
-            val fullName = "$firstName $lastName"
-            // For this example, we pass the role as the bio.
+            // Show progress bar and disable button
+            binding.progressBar.visibility = View.VISIBLE
+            binding.btnRegister.isEnabled = false
+
             // Convert selected image URI to Bitmap if available.
             val bitmap: Bitmap? = selectedImageUri?.let { getBitmapFromUri(it) }
 
             Model.shared.signUp(email, password, firstName, lastName, role, bitmap) { firebaseUser, error ->
                 activity?.runOnUiThread {
+                    // Hide progress bar and re-enable button
+                    binding.progressBar.visibility = View.GONE
+                    binding.btnRegister.isEnabled = true
+
                     if (firebaseUser != null) {
-                        (activity as? AuthActivity)?.navigateToMainActivity()
+                        // Registration successful, navigate to Login
+                        (activity as? AuthActivity)?.navigateToLogin()
                     } else {
                         Toast.makeText(requireContext(), error ?: "Sign up failed", Toast.LENGTH_LONG).show()
                     }
