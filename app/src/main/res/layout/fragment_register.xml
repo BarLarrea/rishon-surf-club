@@ -24,37 +24,38 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/ivProfileImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/ic_person"
+            android:scaleType="centerCrop"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="Profile Image" />
+
         <TextView
             android:id="@+id/tvUploadProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Upload a profile page"
+            android:layout_marginTop="8dp"
+            android:text="Tap to upload profile picture"
             android:textColor="#4285F4"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/ivProfileImage"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-
-        <TextView
-            android:id="@+id/tvSubtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Enter your details to register"
-            android:textColor="#666666"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/tvUploadProfile"
-            app:layout_constraintStart_toStartOf="parent"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilFirstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:hint="@string/first_name"
+            android:hint="First Name"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            app:layout_constraintTop_toBottomOf="@id/tvSubtitle">
+            app:layout_constraintTop_toBottomOf="@id/tvUploadProfile">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etFirstName"
@@ -68,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="@string/last_name"
+            android:hint="Last Name"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:layout_constraintTop_toBottomOf="@id/tilFirstName">
 
@@ -84,17 +85,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:hint="Role"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            app:layout_constraintTop_toBottomOf="@id/tilLastName">
+            app:layout_constraintTop_toBottomOf="@id/tilLastName"
+            tools:ignore="HardcodedText">
 
             <AutoCompleteTextView
                 android:id="@+id/actvRole"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:contentDescription="Select your role"
-                android:hint="@string/select_your_role"
-                tools:ignore="EditTextContentDescription" />
+                tools:ignore="ContentDescription,LabelFor" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -102,7 +103,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="@string/email"
+            android:hint="Email"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:layout_constraintTop_toBottomOf="@id/tilRole">
 
@@ -118,7 +119,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="@string/password"
+            android:hint="Password"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:passwordToggleEnabled="true"
             app:layout_constraintTop_toBottomOf="@id/tilEmail">
@@ -141,18 +142,28 @@
             android:textSize="16sp"
             app:cornerRadius="25dp"
             android:backgroundTint="#7B8CDE"
-            app:layout_constraintTop_toBottomOf="@id/tilPassword"
-            tools:ignore="HardcodedText" />
+            app:layout_constraintTop_toBottomOf="@id/tilPassword"/>
+
         <TextView
             android:id="@+id/tvBackToLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="Back to Login"
             android:textColor="#4285F4"
             android:textSize="16sp"
-            android:padding="8dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/btnRegister"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.458"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnRegister" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
