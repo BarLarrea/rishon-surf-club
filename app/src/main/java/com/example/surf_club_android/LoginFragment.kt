@@ -42,10 +42,10 @@ class LoginFragment : Fragment() {
         val password = binding.etPassword.text.toString()
 
         if (email.isNotBlank() && password.isNotBlank()) {
-            // Call Model.shared.signIn which takes a callback with FirebaseUser? and error message.
             Model.shared.signIn(email, password) { firebaseUser, error ->
                 activity?.runOnUiThread {
                     if (firebaseUser != null) {
+                        // Login successful, navigate to MainActivity
                         (activity as? AuthActivity)?.navigateToMainActivity()
                     } else {
                         Toast.makeText(requireContext(), error ?: "Sign in failed", Toast.LENGTH_LONG).show()

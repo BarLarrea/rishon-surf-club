@@ -39,11 +39,10 @@ class AuthActivity : AppCompatActivity() {
     }
 
     fun navigateToLogin() {
-        showLoginFragment()
+        replaceFragment(LoginFragment())
     }
 
     fun navigateToMainActivity() {
-        // Replace MainActivity::class.java with your actual main activity
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
