@@ -23,14 +23,14 @@ class PostAdapter : ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallba
     class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(post: Post) {
             binding.apply {
-                tvHostName.text = post.hostName
+                tvHostName.text = post.authorName
                 tvDate.text = post.date
                 tvWaveHeight.text = post.waveHeight
                 tvWindHeight.text = post.windSpeed
                 tvDescription.text = post.description
 
                 Glide.with(ivHostProfile)
-                    .load(post.hostProfileImage)
+                    .load(post.authorImage)
                     .circleCrop()
                     .into(ivHostProfile)
 

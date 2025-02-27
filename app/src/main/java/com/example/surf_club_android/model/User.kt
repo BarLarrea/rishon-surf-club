@@ -21,7 +21,7 @@ data class User(
         private const val EMAIL_KEY = "email"
         private const val PASSWORD_KEY = "password"
         private const val ROLE_KEY = "role"
-        private const val  PROFILE_IMAGE_URL_KEY = "profileImageUrl"
+        private const val PROFILE_IMAGE_URL_KEY = "profileImageUrl"
 
         fun fromJSON(json: Map<String, Any>): User {
             return User(
@@ -44,6 +44,6 @@ data class User(
             EMAIL_KEY to email,
             PASSWORD_KEY to password,
             ROLE_KEY to role,
-            PROFILE_IMAGE_URL_KEY to profileImageUrl,
+            PROFILE_IMAGE_URL_KEY to profileImageUrl
         ) as Map<String, Any>
 }

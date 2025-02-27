@@ -137,7 +137,14 @@ class FirebaseModel {
             }
     }
 
-    fun signUp(email: String, password: String, name: String, callback: (FirebaseUser?, String?) -> Unit) {
+    fun signUp(
+        email: String,
+        password: String,
+        firstName: String,
+        lastName: String,
+        role: String,
+        callback: (FirebaseUser?, String?) -> Unit
+    ) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
@@ -148,6 +155,7 @@ class FirebaseModel {
                 }
             }
     }
+
 
 
     fun signIn(email: String, password: String, callback: (FirebaseUser?, String?) -> Unit) {
@@ -168,13 +176,21 @@ class FirebaseModel {
     // --------------------
     // User Data Functions
     // --------------------
-    fun saveUser(user: FirebaseUser, name: String, bio: String, image: String?, callback: (Boolean, String?) -> Unit) {
+    fun saveUser(    user: FirebaseUser,
+                     firstName: String,
+                     lastName: String,
+                     email: String,
+                     role: String,
+                     image: String?,
+                     callback: (Boolean, String?) -> Unit) {
         // Define the user data you want to store.
         val userData = hashMapOf(
             "id" to user.uid,
             "image" to image,
-            "bio" to bio,
-            "name" to name,
+            "role" to role,
+            "firstName" to firstName,
+            "lastName" to lastName,
+            "email" to email
         )
 
         // Save the data in the "users" collection with the document id as the user's uid.
