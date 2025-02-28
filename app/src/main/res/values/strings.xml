@@ -41,4 +41,7 @@
     <string name="message">Message</string>
     <string name="hi_nhow_can_i_help_you_today">Hi,\nhow can I help you today?</string>
     <string name="chat_with_kelly">Chat with Kelly</string>
+
+    <string name="full_name_format">%1$s %2$s</string>
+    <string name="no_info_provided">No information provided</string>
 </resources>

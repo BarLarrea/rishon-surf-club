@@ -1,13 +1,17 @@
 package com.example.surf_club_android
 
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.surf_club_android.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,25 +19,31 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setDisplayShowHomeEnabled(true)
 
-        if (savedInstanceState == null) {
-            showHomeFragment()
-        }
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
-        binding.toolbar.setNavigationOnClickListener {
-            onBackPressed()
+        setupActionBarWithNavController(navController)
+
+        setupBottomNavigation()
+    }
+
+    private fun setupBottomNavigation() {
+        binding.bottomNavigation.apply {
+            findViewById<ImageView>(R.id.homeButton)?.setOnClickListener {
+                navController.navigate(R.id.homeFragment)
+            }
+            findViewById<ImageView>(R.id.chatButton)?.setOnClickListener {
+                navController.navigate(R.id.chatFragment)
+            }
+            findViewById<ImageView>(R.id.profileButton)?.setOnClickListener {
+                navController.navigate(R.id.profileFragment)
+            }
         }
     }
 
-    private fun showHomeFragment() {
-        replaceFragment(HomeFragment())
-    }
-
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .commit()
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }

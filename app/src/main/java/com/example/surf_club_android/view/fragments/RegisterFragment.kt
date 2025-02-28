@@ -1,4 +1,4 @@
-package com.example.surf_club_android
+package com.example.surf_club_android.view.fragments
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentRegisterBinding
 import com.example.surf_club_android.model.Model
 
@@ -55,7 +57,7 @@ class RegisterFragment : Fragment() {
         }
 
         binding.tvBackToLogin.setOnClickListener {
-            (activity as? AuthActivity)?.navigateToLogin()
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
         }
 
         binding.ivProfileImage.setOnClickListener {
@@ -88,7 +90,7 @@ class RegisterFragment : Fragment() {
 
                     if (firebaseUser != null) {
                         // Registration successful, navigate to Login
-                        (activity as? AuthActivity)?.navigateToLogin()
+                        findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
                     } else {
                         Toast.makeText(requireContext(), error ?: "Sign up failed", Toast.LENGTH_LONG).show()
                     }

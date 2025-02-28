@@ -12,7 +12,8 @@ data class User(
     val email: String,
     val password: String,
     val role: String,
-    var profileImageUrl: String? = null
+    var profileImageUrl: String? = null,
+    var aboutMe: String? = null
 ) {
     companion object {
         private const val ID_KEY = "id"
@@ -22,7 +23,7 @@ data class User(
         private const val PASSWORD_KEY = "password"
         private const val ROLE_KEY = "role"
         private const val PROFILE_IMAGE_URL_KEY = "profileImageUrl"
-
+        private const val ABOUT_ME_KEY = "aboutMe"
         fun fromJSON(json: Map<String, Any>): User {
             return User(
                 id = json[ID_KEY] as? String ?: "",
@@ -31,7 +32,8 @@ data class User(
                 email = json[EMAIL_KEY] as? String ?: "",
                 password = json[PASSWORD_KEY] as? String ?: "",
                 role = json[ROLE_KEY] as? String ?: "",
-                profileImageUrl = json[PROFILE_IMAGE_URL_KEY] as? String ?: ""
+                profileImageUrl = json[PROFILE_IMAGE_URL_KEY] as? String ?: "",
+                aboutMe = json[ABOUT_ME_KEY] as? String ?: ""
             )
         }
     }
@@ -44,6 +46,7 @@ data class User(
             EMAIL_KEY to email,
             PASSWORD_KEY to password,
             ROLE_KEY to role,
-            PROFILE_IMAGE_URL_KEY to profileImageUrl
-        ) as Map<String, Any>
+            PROFILE_IMAGE_URL_KEY to (profileImageUrl ?: ""),
+            ABOUT_ME_KEY to (aboutMe ?: "")
+        )
 }

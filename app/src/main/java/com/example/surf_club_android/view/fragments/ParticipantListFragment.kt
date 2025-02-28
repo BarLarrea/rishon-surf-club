@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.surf_club_android.R
-import com.example.surf_club_android.view.adapter.ParticipantAdapter
+import com.example.surf_club_android.adapter.ParticipantAdapter
 
 class ParticipantListFragment : Fragment(R.layout.fragment_participant_list) {
 
