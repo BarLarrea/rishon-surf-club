@@ -10,4 +10,38 @@
     <string name="last_name">Last Name</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
+
+    <string name="add_session">Add Session</string>
+    <string name="date">Date</string>
+    <string name="wave_height">Wave Height</string>
+    <string name="wind_speed">Wind Speed</string>
+    <string name="description">Description</string>
+    <string name="attach_a_photo">Attach a Photo</string>
+    <string name="add_and_publish">Add and Publish</string>
+    <string name="edit_photo">Edit Photo</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="join">Join</string>
+    <string name="participant_profile_image">Participant profile image</string>
+
+    <string name="participant_count">%d Participants</string>
+    <string name="your_profile">Your profile</string>
+    <string name="team">Team:</string>
+    <string name="email_dots">Email:</string>
+    <string name="about_me">About me:</string>
+    <string name="my_sessions">My sessions</string>
+    <string name="edit_profile">Edit profile</string>
+
+    <string name="title_home">Home</string>
+    <string name="title_chat">Chat</string>
+    <string name="title_profile">Profile</string>
+    <string name="home">Home</string>
+    <string name="chat">Chat</string>
+    <string name="profile">Profile</string>
+    <string name="send">send</string>
+    <string name="message">Message</string>
+    <string name="hi_nhow_can_i_help_you_today">Hi,\nhow can I help you today?</string>
+    <string name="chat_with_kelly">Chat with Kelly</string>
+
+    <string name="full_name_format">%1$s %2$s</string>
+    <string name="no_info_provided">No information provided</string>
 </resources>

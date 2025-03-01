@@ -1,44 +1,29 @@
 package com.example.surf_club_android
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 import com.example.surf_club_android.databinding.ActivityAuthBinding
-
 
 class AuthActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAuthBinding
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null) {
-            showLoginFragment()
-        }
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.auth_nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
     }
 
-    private fun showLoginFragment() {
-        replaceFragment(LoginFragment())
-    }
-
-    private fun showRegisterFragment() {
-        replaceFragment(RegisterFragment())
-    }
-
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .addToBackStack(null)
-            .commit()
-    }
-
-    fun navigateToRegister() {
-        showRegisterFragment()
-    }
-
-    fun navigateToLogin() {
-        showLoginFragment()
+    fun navigateToMainActivity() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }
