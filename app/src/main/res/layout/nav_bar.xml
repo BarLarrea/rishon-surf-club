@@ -51,7 +51,7 @@
         android:layout_weight="1" />
 
     <ImageView
-        android:id="@+id/addButton"
+        android:id="@+id/createPostButton"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/nav_button_background"
