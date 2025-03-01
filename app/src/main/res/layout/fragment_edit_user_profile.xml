@@ -11,191 +11,129 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Edit profile"
-            android:textColor="#4A90E2"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ImageView
             android:id="@+id/iv_profile"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="107dp"
+            android:layout_height="108dp"
+            android:layout_marginTop="24dp"
+            android:contentDescription="@string/profile_picture"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/tv_edit_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit photo"
+            android:layout_marginTop="16dp"
+            android:text="@string/edit_photo"
             android:textColor="@color/blue_primary_dark"
-            android:textSize="12sp"
+            android:textSize="16sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@id/iv_profile"
+            app:layout_constraintHorizontal_bias="0.49"
             app:layout_constraintStart_toStartOf="@id/iv_profile"
             app:layout_constraintTop_toBottomOf="@id/iv_profile" />
 
-        <TextView
-            android:id="@+id/tv_first_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="First Name:"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_edit_photo" />
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_first_name"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
             app:boxStrokeColor="#4A90E2"
             app:boxStrokeWidthFocused="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_first_name">
+            app:layout_constraintTop_toBottomOf="@id/tv_edit_photo">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_first_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:paddingHorizontal="16dp" />
+                android:hint="@string/first_name"
+                android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/tv_last_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Last Name:"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_first_name" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_last_name"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             app:boxStrokeColor="#4A90E2"
             app:boxStrokeWidthFocused="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_last_name">
+            app:layout_constraintTop_toBottomOf="@id/til_first_name">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_last_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:paddingHorizontal="16dp" />
+                android:hint="@string/last_name"
+                android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/tv_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Email:"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_last_name" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_email"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             app:boxStrokeColor="#4A90E2"
             app:boxStrokeWidthFocused="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_email">
+            app:layout_constraintTop_toBottomOf="@id/til_last_name">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"
-                android:paddingHorizontal="16dp" />
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/tv_role"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Role:"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_email" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_role"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             app:boxStrokeColor="#4A90E2"
             app:boxStrokeWidthFocused="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_role">
+            app:layout_constraintTop_toBottomOf="@id/til_email">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_role"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                android:paddingHorizontal="16dp" />
+                android:hint="@string/select_your_role"
+                android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:id="@+id/tv_about_me"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="About me:"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/til_role" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/til_about_me"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             app:boxStrokeColor="#4A90E2"
             app:boxStrokeWidthFocused="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_about_me">
+            app:layout_constraintTop_toBottomOf="@id/til_role">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_about_me"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:hint="@string/about_me"
                 android:gravity="top"
                 android:inputType="textMultiLine"
-                android:lines="3"
-                android:paddingHorizontal="16dp" />
+                android:lines="3" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_edit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Edit"
+            android:layout_marginTop="32dp"
+            android:contentDescription="@string/save_changes"
+            android:text="@string/save_changes"
             app:cornerRadius="24dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/til_about_me"
             app:layout_constraintWidth_max="254dp" />
