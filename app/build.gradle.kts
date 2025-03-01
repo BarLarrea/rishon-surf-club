@@ -15,11 +15,11 @@ val localProperties = Properties().apply {
     }
 }
 
-// Retrieve the Cloudinary properties
-val cloudinaryCloudName: String = localProperties.getProperty("cloud_name") ?: ""
-val cloudinaryApiKey: String = localProperties.getProperty("cloudinary_api_key") ?: ""
-val cloudinaryApiSecret: String = localProperties.getProperty("cloudinary_api_secret") ?: ""
-val cocktailApiKey: String = localProperties.getProperty("cocktail_api_key") ?: ""
+// Retrieve the Cloudinary properties using the correct keys from local.properties
+val cloudinaryCloudName: String = localProperties.getProperty("cloudinaryCloudName") ?: ""
+val cloudinaryApiKey: String = localProperties.getProperty("cloudinaryApiKey") ?: ""
+val cloudinaryApiSecret: String = localProperties.getProperty("cloudinaryApiSecret") ?: ""
+val cocktailApiKey: String = localProperties.getProperty("cocktailApiKey") ?: ""
 
 android {
     buildFeatures {
@@ -64,7 +64,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -95,7 +94,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
 
-    // Kotlin Coroutines (if you are using suspend functions)
+    // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
 
@@ -105,8 +104,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    //Nav Graph
+    // Navigation Graph
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-
 }
