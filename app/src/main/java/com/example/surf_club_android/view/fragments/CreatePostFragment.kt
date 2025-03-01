@@ -1,4 +1,4 @@
-package com.example.surf_club_android.ui
+package com.example.surf_club_android.view.fragments
 
 import android.app.Activity
 import android.app.DatePickerDialog
