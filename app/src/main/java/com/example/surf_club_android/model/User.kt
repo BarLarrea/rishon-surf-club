@@ -1,20 +1,22 @@
 package com.example.surf_club_android.model
 
+import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
 data class User(
     @PrimaryKey
-    val id: String,
-    val firstName: String,
-    val lastName: String,
-    val email: String,
-    val password: String,
-    val role: String,
+    var id: String = "",
+    var firstName: String = "",
+    var lastName: String = "",
+    var email: String = "",
+    var password: String = "",
+    var role: String = "",
     var profileImageUrl: String? = null,
     var aboutMe: String? = null
 ) {
+    constructor() : this("", "", "", "", "", "", null, null)
     companion object {
         private const val ID_KEY = "id"
         private const val FIRST_NAME_KEY = "firstName"
@@ -24,6 +26,7 @@ data class User(
         private const val ROLE_KEY = "role"
         private const val PROFILE_IMAGE_URL_KEY = "profileImageUrl"
         private const val ABOUT_ME_KEY = "aboutMe"
+
         fun fromJSON(json: Map<String, Any>): User {
             return User(
                 id = json[ID_KEY] as? String ?: "",
