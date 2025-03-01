@@ -1,15 +1,15 @@
 package com.example.surf_club_android.view.fragments
 
-import android.app.Activity
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.surf_club_android.databinding.FragmentCreatePostBinding
@@ -25,11 +25,14 @@ class CreatePostFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val authViewModel: AuthViewModel by viewModels()
-    private var selectedImage: Bitmap? = null
+    private var selectedImageUri: Uri? = null
     private var sessionDate: Date? = null
 
-    companion object {
-        private const val REQUEST_IMAGE_CAPTURE = 1
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it
+            binding.ivPostImage.setImageURI(it)
+        }
     }
 
     override fun onCreateView(
@@ -45,7 +48,7 @@ class CreatePostFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnAddImage.setOnClickListener {
-            dispatchTakePictureIntent()
+            getContent.launch("image/*")
         }
 
         binding.btnCreatePost.setOnClickListener {
@@ -56,7 +59,6 @@ class CreatePostFragment : Fragment() {
             showDatePicker()
         }
 
-        // Set current date for post creation
         val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         binding.tvDate.text = "Post Date: $currentDate"
     }
@@ -73,22 +75,6 @@ class CreatePostFragment : Fragment() {
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             binding.tvSessionDate.text = "Session Date: ${dateFormat.format(sessionDate!!)}"
         }, year, month, day).show()
-    }
-
-    private fun dispatchTakePictureIntent() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            selectedImage = imageBitmap
-            binding.ivPostImage.setImageBitmap(imageBitmap)
-        }
     }
 
     private fun createPost() {
@@ -120,14 +106,21 @@ class CreatePostFragment : Fragment() {
             waveHeight = waveHeight,
             windSpeed = windSpeed,
             description = description,
-            postImage = "" // This will be updated after image upload
+            postImage = ""
         )
 
-        Model.shared.addPost(post, selectedImage) {
-            showLoading(false)
-            Toast.makeText(context, "Post created successfully", Toast.LENGTH_SHORT).show()
-            // Uncomment the following line when you're ready to implement navigation
-            // navigateToHome()
+        val bitmap: Bitmap? = selectedImageUri?.let { getBitmapFromUri(it) }
+
+        Model.shared.addPost(post, bitmap) { success, imageUrl ->
+            activity?.runOnUiThread {
+                showLoading(false)
+                if (success) {
+                    Toast.makeText(context, "Post created successfully", Toast.LENGTH_SHORT).show()
+                    // Navigation logic can be added here
+                } else {
+                    Toast.makeText(context, "Failed to create post", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -141,12 +134,16 @@ class CreatePostFragment : Fragment() {
         binding.btnSelectSessionDate.isEnabled = !isLoading
     }
 
-    // Uncomment and implement this method when you're ready to add navigation
-    /*
-    private fun navigateToHome() {
-        // Implement navigation logic here
+    private fun getBitmapFromUri(uri: Uri): Bitmap? {
+        return try {
+            requireContext().contentResolver.openInputStream(uri)?.use { inputStream ->
+                BitmapFactory.decodeStream(inputStream)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
-    */
 
     override fun onDestroyView() {
         super.onDestroyView()

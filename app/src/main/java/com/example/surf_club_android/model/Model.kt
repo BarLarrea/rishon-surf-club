@@ -1,11 +1,9 @@
 package com.example.surf_club_android.model
 
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.core.os.HandlerCompat
 import com.example.surf_club_android.base.EmptyCallback
 import com.example.surf_club_android.base.PostsCallback
 import com.example.surf_club_android.base.UsersCallback
@@ -30,10 +28,8 @@ class Model private constructor() {
         firebaseModel.getAllPosts { posts ->
             Log.d("TAG", "Getting posts from Firebase: $posts")
             if (posts.isNotEmpty()) {
-                // Count how many posts have a non-empty author field.
                 val postsToFetch = posts.count { it.author.isNotEmpty() }
                 if (postsToFetch == 0) {
-                    // No posts need author info – store and return immediately.
                     roomExecutor.execute {
                         database.postDao().insertPosts(*posts.toTypedArray())
                     }
@@ -41,9 +37,7 @@ class Model private constructor() {
                         callback(posts)
                     }
                 } else {
-                    // Create a mutable copy to update each post with user info.
                     val updatedPosts = posts.toMutableList()
-                    // Use an atomic counter to track the number of pending user fetches.
                     val counter = AtomicInteger(postsToFetch)
                     for ((index, post) in updatedPosts.withIndex()) {
                         if (post.author.isNotEmpty()) {
@@ -123,40 +117,37 @@ class Model private constructor() {
         }
     }
 
-    fun addPost(post: Post, profileImage: Bitmap?, callback: EmptyCallback) {
+    fun addPost(post: Post, profileImage: Bitmap?, callback: (Boolean, String?) -> Unit) {
+        if (profileImage != null) {
+            uploadImageToCloudinary(
+                image = profileImage,
+                name = post.id,
+                onSuccess = { url ->
+                    val updatedPost = post.copy(postImage = url)
+                    savePostToFirebaseAndLocal(updatedPost, callback)
+                },
+                onError = { error ->
+                    Log.e("Model", "Error uploading image to Cloudinary: $error")
+                    callback(false, null)
+                }
+            )
+        } else {
+            savePostToFirebaseAndLocal(post, callback)
+        }
+    }
+
+    private fun savePostToFirebaseAndLocal(post: Post, callback: (Boolean, String?) -> Unit) {
         firebaseModel.addPost(post) { firebaseSuccess ->
-            if (!firebaseSuccess) {
-                Log.d("TAG", "Firebase add failed")
-                mainHandler.post { callback() }
-                return@addPost
-            }
-
-            Log.d("TAG", "Firebase add succeeded")
-            roomExecutor.execute {
-                database.postDao().insertPosts(post)
-            }
-
-            if (profileImage != null) {
-                uploadImageToCloudinary(
-                    image = profileImage,
-                    name = post.id,
-                    onSuccess = { url ->
-                        val updatedPost = post.copy(postImage = url)
-                        firebaseModel.addPost(updatedPost) { updateSuccess ->
-                            if (updateSuccess) {
-                                roomExecutor.execute {
-                                    database.postDao().insertPosts(updatedPost)
-                                }
-                            }
-                            mainHandler.post { callback() }
-                        }
-                    },
-                    onError = {
-                        mainHandler.post { callback() }
+            if (firebaseSuccess) {
+                roomExecutor.execute {
+                    database.postDao().insertPosts(post)
+                    mainHandler.post {
+                        callback(true, post.postImage)
                     }
-                )
+                }
             } else {
-                mainHandler.post { callback() }
+                Log.d("TAG", "Firebase add failed")
+                callback(false, null)
             }
         }
     }
@@ -191,7 +182,7 @@ class Model private constructor() {
         }
     }
 
-    fun getUser(id: String, callback: (User) -> Unit) {
+    fun getUser(id: String, callback: (User?) -> Unit) {
         firebaseModel.getUser(id) { user ->
             if (user != null) {
                 roomExecutor.execute {
@@ -201,7 +192,6 @@ class Model private constructor() {
             } else {
                 roomExecutor.execute {
                     val localUser = database.userDao().getUserById(id)
-                        ?: User(id, "Deleted user", "", "", "", "", null)
                     mainHandler.post { callback(localUser) }
                 }
             }
@@ -221,52 +211,21 @@ class Model private constructor() {
         bitmap: Bitmap?,
         callback: (FirebaseUser?, String?) -> Unit
     ) {
-        // Call FirebaseModel.signUp with the role included.
         firebaseModel.signUp(email, password, firstName, lastName, role) { firebaseUser, error ->
             if (firebaseUser != null) {
                 if (bitmap != null) {
-                    uploadImageToCloudinary(bitmap, firebaseUser.uid, onSuccess = { imageUrl ->
-                        Log.d("TAG", "Image uploaded to Cloudinary: $imageUrl")
-                        firebaseModel.saveUser(firebaseUser, firstName, lastName, email, role, imageUrl) { success, saveError ->
-                            if (success) {
-                                roomExecutor.execute {
-                                    database.userDao().insertUsers(
-                                        User(firebaseUser.uid, firstName, lastName, email, "", role, imageUrl)
-                                    )
-                                }
-                                mainHandler.post { callback(firebaseUser, null) }
-                            } else {
-                                mainHandler.post { callback(null, saveError ?: "Error saving user to Firestore") }
-                            }
+                    uploadImageToCloudinary(bitmap, firebaseUser.uid,
+                        onSuccess = { imageUrl ->
+                            Log.d("TAG", "Image uploaded to Cloudinary: $imageUrl")
+                            saveUserToFirebaseAndLocal(firebaseUser, firstName, lastName, email, role, imageUrl, callback)
+                        },
+                        onError = { errMsg ->
+                            Log.e("TAG", "Image upload to Cloudinary failed: $errMsg")
+                            saveUserToFirebaseAndLocal(firebaseUser, firstName, lastName, email, role, "", callback)
                         }
-                    }, onError = { errMsg ->
-                        Log.e("TAG", "Image upload to Cloudinary failed: $errMsg")
-                        firebaseModel.saveUser(firebaseUser, firstName, lastName, email, role, "") { success, saveError ->
-                            if (success) {
-                                roomExecutor.execute {
-                                    database.userDao().insertUsers(
-                                        User(firebaseUser.uid, firstName, lastName, email, "", role, "")
-                                    )
-                                }
-                                mainHandler.post { callback(firebaseUser, null) }
-                            } else {
-                                mainHandler.post { callback(null, saveError ?: "Error saving user to Firestore") }
-                            }
-                        }
-                    })
+                    )
                 } else {
-                    firebaseModel.saveUser(firebaseUser, firstName, lastName, email, role, "") { success, saveError ->
-                        if (success) {
-                            roomExecutor.execute {
-                                database.userDao().insertUsers(
-                                    User(firebaseUser.uid, firstName, lastName, email, "", role, "")
-                                )
-                            }
-                            mainHandler.post { callback(firebaseUser, null) }
-                        } else {
-                            mainHandler.post { callback(null, saveError ?: "Error saving user to Firestore") }
-                        }
-                    }
+                    saveUserToFirebaseAndLocal(firebaseUser, firstName, lastName, email, role, "", callback)
                 }
             } else {
                 mainHandler.post { callback(null, error ?: "Sign up failed") }
@@ -274,7 +233,28 @@ class Model private constructor() {
         }
     }
 
-
+    private fun saveUserToFirebaseAndLocal(
+        firebaseUser: FirebaseUser,
+        firstName: String,
+        lastName: String,
+        email: String,
+        role: String,
+        imageUrl: String,
+        callback: (FirebaseUser?, String?) -> Unit
+    ) {
+        firebaseModel.saveUser(firebaseUser, firstName, lastName, email, role, imageUrl) { success, saveError ->
+            if (success) {
+                roomExecutor.execute {
+                    database.userDao().insertUsers(
+                        User(firebaseUser.uid, firstName, lastName, email, "", role, imageUrl)
+                    )
+                }
+                mainHandler.post { callback(firebaseUser, null) }
+            } else {
+                mainHandler.post { callback(null, saveError ?: "Error saving user to Firestore") }
+            }
+        }
+    }
 
     fun getAllUsers(callback: UsersCallback) {
         firebaseModel.getAllUsers { users ->
@@ -298,10 +278,6 @@ class Model private constructor() {
 
     fun signOut() {
         firebaseModel.signOut()
-    }
-
-    private fun uploadImageToFirebase(image: Bitmap, name: String, callback: (String?) -> Unit) {
-        firebaseModel.uploadImage(image, name, callback)
     }
 
     private fun uploadImageToCloudinary(
