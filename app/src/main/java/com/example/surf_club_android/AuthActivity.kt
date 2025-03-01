@@ -21,14 +21,6 @@ class AuthActivity : AppCompatActivity() {
         navController = navHostFragment.navController
     }
 
-    fun navigateToRegister() {
-        navController.navigate(R.id.action_loginFragment_to_registerFragment)
-    }
-
-    fun navigateToLogin() {
-        navController.navigate(R.id.action_registerFragment_to_loginFragment)
-    }
-
     fun navigateToMainActivity() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
