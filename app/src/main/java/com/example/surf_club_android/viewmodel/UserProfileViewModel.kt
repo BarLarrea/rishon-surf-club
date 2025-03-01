@@ -1,4 +1,4 @@
-//package com.example.surf_club_android.viewmodel
+package com.example.surf_club_android.viewmodel//package com.example.surf_club_android.viewmodel
 //
 //import androidx.lifecycle.LiveData
 //import androidx.lifecycle.MutableLiveData

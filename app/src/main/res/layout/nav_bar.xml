@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bottomNavigation"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,25 +7,25 @@
     android:layout_marginEnd="20dp"
     android:layout_marginBottom="20dp"
     android:background="@drawable/bottom_nav_background"
-    android:orientation="horizontal"
     android:gravity="center"
+    android:orientation="horizontal"
     android:paddingStart="16dp"
-    android:paddingEnd="16dp"
     android:paddingTop="8dp"
+    android:paddingEnd="16dp"
     android:paddingBottom="8dp">
 
     <ImageView
         android:id="@+id/homeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        android:src="@drawable/ic_home"
-        android:contentDescription="@string/home"
+        android:background="@drawable/nav_button_background"
         android:clickable="true"
+        android:contentDescription="@string/home"
         android:focusable="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="8dp" />
+        android:minWidth="46dp"
+        android:minHeight="48dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_home" />
 
     <Space
         android:layout_width="0dp"
@@ -37,14 +36,31 @@
         android:id="@+id/chatButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/nav_button_background"
+        android:clickable="true"
+        android:contentDescription="@string/chat"
+        android:focusable="true"
         android:minWidth="48dp"
         android:minHeight="48dp"
-        android:src="@drawable/ic_chat"
-        android:contentDescription="@string/chat"
+        android:padding="8dp"
+        android:src="@drawable/ic_chat" />
+
+    <Space
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+    <ImageView
+        android:id="@+id/addButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/nav_button_background"
         android:clickable="true"
+        android:contentDescription="@string/add_session"
         android:focusable="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_add" />
 
     <Space
         android:layout_width="0dp"
@@ -55,13 +71,13 @@
         android:id="@+id/profileButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        android:src="@drawable/ic_profile"
-        android:contentDescription="@string/profile"
+        android:background="@drawable/nav_button_background"
         android:clickable="true"
+        android:contentDescription="@string/profile"
         android:focusable="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="4dp" />
+        android:minWidth="60dp"
+        android:minHeight="56dp"
+        android:padding="8dp"
+        android:src="@drawable/ic_profile" />
 
 </LinearLayout>
