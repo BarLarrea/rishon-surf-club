@@ -44,9 +44,9 @@ class UserProfileViewModel : ViewModel() {
                         lastName = updatedUser.lastName,
                         role = updatedUser.role,
                         bitmap = null
-                    ) { _, error ->
-                        if (error != null) {
-                            _error.postValue("User update failed: $error")
+                    ) { _, signUpError ->
+                        if (signUpError != null) {
+                            _error.postValue("User update failed: $signUpError")
                         } else {
                             _user.postValue(updatedUser)
                         }

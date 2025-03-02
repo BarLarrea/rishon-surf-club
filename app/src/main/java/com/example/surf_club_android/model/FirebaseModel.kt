@@ -235,6 +235,16 @@ class FirebaseModel {
             }
     }
 
+    fun updateUser(user: User, callback: (Boolean) -> Unit) {
+        database.collection("users").document(user.id).set(user)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
+    }
+
     fun uploadImage(image: Bitmap, name: String, callback: (String?) -> Unit) {
         val storageRef = storage.reference
         val imageProfileRef = storageRef.child("images/$name.jpg")

@@ -198,6 +198,19 @@ class Model private constructor() {
         }
     }
 
+    fun updateUser(updatedUser: User, callback: (Boolean) -> Unit) {
+        firebaseModel.updateUser(updatedUser) { success ->
+            if (success) {
+                roomExecutor.execute {
+                    database.userDao().updateUser(updatedUser)
+                    mainHandler.post { callback(true) }
+                }
+            } else {
+                mainHandler.post { callback(false) }
+            }
+        }
+    }
+
     fun signIn(email: String, password: String, callback: (FirebaseUser?, String?) -> Unit) {
         firebaseModel.signIn(email, password, callback)
     }
