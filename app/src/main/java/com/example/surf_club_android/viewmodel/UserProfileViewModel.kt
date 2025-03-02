@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.surf_club_android.model.Model
+import com.example.surf_club_android.model.Post
 import com.example.surf_club_android.model.User
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 
 class UserProfileViewModel : ViewModel() {
-    private val repository = UserRepository()
+    private val model = Model.shared
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> = _user
 
@@ -20,22 +22,25 @@ class UserProfileViewModel : ViewModel() {
     val error: LiveData<String?> = _error
 
     fun loadUser(userId: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            _error.value = null
-            try {
-                val loadedUser = repository.getUserById(userId)
-                _user.value = loadedUser
-                if (loadedUser == null) {
-                    _error.value = "User not found"
-                }
-            } catch (e: Exception) {
-                _error.value = "Error loading user: ${e.message}"
-            } finally {
-                _isLoading.value = false
-            }
+        _isLoading.value = true
+        _error.value = null
+
+        model.getUser(userId) { loadedUser ->
+            _user.postValue(loadedUser)
+            _isLoading.postValue(false)
         }
     }
+
+    private val _userSessions = MutableLiveData<List<Post>>()
+    val userSessions: LiveData<List<Post>> = _userSessions
+
+    fun loadUserSessions(userId: String) {
+        model.getAllUserPosts(userId) { sessions ->
+            _userSessions.postValue(sessions)
+        }
+    }
+
+
 
     fun updateUser(updatedUser: User) {
         viewModelScope.launch {
@@ -44,19 +49,28 @@ class UserProfileViewModel : ViewModel() {
             try {
                 val firebaseUser = FirebaseAuth.getInstance().currentUser
                 if (firebaseUser != null) {
-                    val success = repository.updateUser(firebaseUser, updatedUser)
-                    if (success) {
-                        _user.value = updatedUser
-                    } else {
-                        _error.value = "User update failed"
+                    model.signUp(
+                        email = updatedUser.email,
+                        password = "",
+                        firstName = updatedUser.firstName,
+                        lastName = updatedUser.lastName,
+                        role = updatedUser.role,
+                        bitmap = null
+                    ) { _, signUpError ->
+                        if (signUpError != null) {
+                            _error.postValue("User update failed: $signUpError")
+                        } else {
+                            _user.postValue(updatedUser)
+                        }
+                        _isLoading.postValue(false)
                     }
                 } else {
-                    _error.value = "User not logged in"
+                    _error.postValue("User not logged in")
+                    _isLoading.postValue(false)
                 }
             } catch (e: Exception) {
-                _error.value = "Error updating user: ${e.message}"
-            } finally {
-                _isLoading.value = false
+                _error.postValue("Error updating user: ${e.message}")
+                _isLoading.postValue(false)
             }
         }
     }

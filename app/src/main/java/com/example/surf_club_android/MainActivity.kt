@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
             findViewById<ImageView>(R.id.profileButton)?.setOnClickListener {
                 navController.navigate(R.id.profileFragment)
             }
+            findViewById<ImageView>(R.id.createPostButton)?.setOnClickListener {
+                navController.navigate(R.id.createPostFragment)
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-//package com.example.surf_club_android
+package com.example.surf_club_android.view.fragments//package com.example.surf_club_android
 //
 //import android.animation.ObjectAnimator
 //import android.annotation.SuppressLint

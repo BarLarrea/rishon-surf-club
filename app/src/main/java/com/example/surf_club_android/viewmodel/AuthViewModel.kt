@@ -33,10 +33,15 @@ class AuthViewModel : ViewModel() {
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> = _isLoading
 
+
+
     init {
         auth.currentUser?.let { firebaseUser ->
             getUserData(firebaseUser.uid)
         }
+    }
+    fun getCurrentUserId(): String? {
+        return auth.currentUser?.uid
     }
 
     fun signIn(email: String, password: String) {

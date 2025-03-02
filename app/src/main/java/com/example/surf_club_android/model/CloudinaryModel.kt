@@ -2,6 +2,7 @@ package com.example.surf_club_android.model
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
@@ -11,60 +12,73 @@ import com.example.surf_club_android.BuildConfig
 import com.example.surf_club_android.base.MyApplication
 import java.io.File
 import java.io.FileOutputStream
-import java.lang.Error
-import kotlin.io.path.CopyActionContext
 
 class CloudinaryModel {
 
+    companion object {
+        private var isInitialized = false
+    }
+
     init {
-        // load from local.properties
+        if (!isInitialized) {
+            val config = mapOf(
+                "cloud_name" to BuildConfig.CLOUDINARY_CLOUD_NAME,
+                "api_key" to BuildConfig.CLOUDINARY_API_KEY,
+                "api_secret" to BuildConfig.CLOUDINARY_API_SECRET
+            )
+            Log.d("CloudinaryModel", "Initializing Cloudinary: cloud_name=${BuildConfig.CLOUDINARY_CLOUD_NAME}")
 
-        val config = mapOf(
-            "cloud_name" to BuildConfig.CLOUDINARY_CLOUD_NAME,
-            "api_key" to BuildConfig.CLOUDINARY_API_KEY,
-            "api_secret" to BuildConfig.CLOUDINARY_API_SECRET
-        )
-
-        MyApplication.Globals.context?.let {
-            MediaManager.init(it, config)
-            MediaManager.get().globalUploadPolicy = GlobalUploadPolicy.Builder()
-                .maxConcurrentRequests(3)
-                .networkPolicy(UploadPolicy.NetworkType.UNMETERED)
-                .build()
+            MyApplication.Globals.context?.let { context ->
+                MediaManager.init(context, config)
+                MediaManager.get().globalUploadPolicy = GlobalUploadPolicy.Builder()
+                    .maxConcurrentRequests(3)
+                    .networkPolicy(UploadPolicy.NetworkType.UNMETERED)
+                    .build()
+                isInitialized = true
+            } ?: Log.e("CloudinaryModel", "Application context is null!")
+        } else {
+            Log.d("CloudinaryModel", "MediaManager is already initialized, skipping.")
         }
     }
 
     fun uploadBitmap(bitmap: Bitmap, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
-        val context = MyApplication.Globals.context ?: return
+        val context = MyApplication.Globals.context
+        if (context == null) {
+            onError("Application context is null")
+            return
+        }
         val file = bitmapToFile(bitmap, context)
+        Log.d("CloudinaryModel", "Uploading file from path: ${file.absolutePath} with size: ${file.length()} bytes")
 
         MediaManager.get().upload(file.path)
-            .option(
-                "folder",
-                "images"
-            ) // Optional: Specify a folder in your Cloudinary account
+            .option("folder", "images")
             .callback(object : UploadCallback {
                 override fun onStart(requestId: String) {
-                    // Called when upload starts
+                    Log.d("CloudinaryModel", "Upload started with requestId: $requestId")
                 }
 
                 override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
-                    // Called during upload progress
+                    val progress = (bytes.toDouble() / totalBytes * 100).toInt()
+                    Log.d("CloudinaryModel", "Upload progress: $progress%")
                 }
 
                 override fun onSuccess(requestId: String, resultData: Map<*, *>) {
                     val publicUrl = resultData["secure_url"] as? String ?: ""
-                    onSuccess(publicUrl) // Return the URL of the uploaded image
+                    Log.d("CloudinaryModel", "Upload successful. URL: $publicUrl")
+                    onSuccess(publicUrl)
                 }
 
                 override fun onError(requestId: String?, error: ErrorInfo?) {
-                    onError(error?.description ?: "Unknown error")
+                    val errorMsg = error?.description ?: "Unknown error"
+                    Log.e("CloudinaryModel", "Upload error: $errorMsg")
+                    onError(errorMsg)
                 }
 
                 override fun onReschedule(requestId: String?, error: ErrorInfo?) {
-                    TODO("Not yet implemented")
+                    val errorMsg = error?.description ?: "Reschedule error"
+                    Log.e("CloudinaryModel", "Upload rescheduled: $errorMsg")
+                    onError(errorMsg)
                 }
-
             })
             .dispatch()
     }
@@ -74,6 +88,7 @@ class CloudinaryModel {
         FileOutputStream(file).use { outputStream ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         }
+        Log.d("CloudinaryModel", "File created at ${file.absolutePath} with size: ${file.length()} bytes")
         return file
     }
 }

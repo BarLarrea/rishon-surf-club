@@ -24,17 +24,23 @@ class FirebaseModel {
     private val storage = Firebase.storage
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    init {
-        val setting = firestoreSettings {
-            setLocalCacheSettings(memoryCacheSettings {  })
-        }
-
-        database.firestoreSettings = setting
+    companion object {
+        private var isFirestoreConfigured = false
     }
+
+    init {
+        if (!isFirestoreConfigured) {
+            val setting = firestoreSettings {
+                setLocalCacheSettings(memoryCacheSettings { })
+            }
+            database.firestoreSettings = setting
+            isFirestoreConfigured = true
+        }
+    }
+
 
     fun getAllPosts(callback: PostsCallback) {
         database.collection(Constants.COLLECTIONS.POSTS)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnCompleteListener {
                 when (it.isSuccessful) {
@@ -140,9 +146,6 @@ class FirebaseModel {
     fun signUp(
         email: String,
         password: String,
-        firstName: String,
-        lastName: String,
-        role: String,
         callback: (FirebaseUser?, String?) -> Unit
     ) {
         auth.createUserWithEmailAndPassword(email, password)
@@ -235,9 +238,73 @@ class FirebaseModel {
             }
     }
 
-    fun uploadImage(image: Bitmap, name: String, callback: (String?) -> Unit) {
+    fun updateUser(user: User, callback: (Boolean) -> Unit) {
+        database.collection("users").document(user.id).set(user)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
+    }
+
+    fun addSessionToUser(userId: String, sessionId: String, callback: (Boolean) -> Unit) {
+        val userRef = database.collection(Constants.COLLECTIONS.USERS).document(userId)
+
+        userRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val user = document.toObject(User::class.java)
+                user?.let {
+                    val updatedSessions = it.sessionIds.toMutableList()
+                    if (!updatedSessions.contains(sessionId)) {
+                        updatedSessions.add(sessionId)
+                        userRef.update("sessionIds", updatedSessions)
+                            .addOnSuccessListener { callback(true) }
+                            .addOnFailureListener { callback(false) }
+                    } else {
+                        callback(true)
+                    }
+                }
+            } else {
+                callback(false)
+            }
+        }.addOnFailureListener {
+            callback(false)
+        }
+    }
+
+    fun getUserSessions(userId: String, callback: (List<Post>) -> Unit) {
+        val userRef = database.collection(Constants.COLLECTIONS.USERS).document(userId)
+
+        userRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val user = document.toObject(User::class.java)
+                user?.let {
+                    if (it.sessionIds.isNotEmpty()) {
+                        database.collection(Constants.COLLECTIONS.POSTS)
+                            .whereIn("id", it.sessionIds)
+                            .get()
+                            .addOnSuccessListener { result ->
+                                val posts = result.documents.mapNotNull { doc -> Post.fromJSON(doc.data ?: emptyMap()) }
+                                callback(posts)
+                            }
+                            .addOnFailureListener { callback(emptyList()) }
+                    } else {
+                        callback(emptyList())
+                    }
+                }
+            } else {
+                callback(emptyList())
+            }
+        }.addOnFailureListener {
+            callback(emptyList())
+        }
+    }
+
+
+    fun uploadProfileImage(image: Bitmap, userId: String, callback: (String?) -> Unit) {
         val storageRef = storage.reference
-        val imageProfileRef = storageRef.child("images/$name.jpg")
+        val imageProfileRef = storageRef.child("profile_images/$userId.jpg")
         val baos = ByteArrayOutputStream()
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
         val data = baos.toByteArray()
@@ -251,4 +318,17 @@ class FirebaseModel {
                 }
             }
     }
+
+    fun updateUserProfileImage(userId: String, imageUrl: String, callback: (Boolean) -> Unit) {
+        database.collection(Constants.COLLECTIONS.USERS).document(userId)
+            .update("profileImageUrl", imageUrl)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                callback(false)
+            }
+    }
+
+
 }

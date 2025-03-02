@@ -44,4 +44,11 @@
 
     <string name="full_name_format">%1$s %2$s</string>
     <string name="no_info_provided">No information provided</string>
+
+    <string name="profile_updated_successfully">Profile updated successfully</string>
+    <string name="photo_change_not_implemented">Photo change functionality is not yet implemented</string>
+
+    <string name="no_sessions">No Sessions Found</string>
+    <string name="no_sessions_found">You are not registered for any sessions yet.</string>
+
 </resources>
