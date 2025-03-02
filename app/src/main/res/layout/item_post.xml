@@ -31,9 +31,11 @@
             android:id="@+id/tv_host_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
             android:textSize="16sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_host_profile"
             app:layout_constraintTop_toTopOf="@id/iv_host_profile"
             tools:text="Tamar Zohar" />

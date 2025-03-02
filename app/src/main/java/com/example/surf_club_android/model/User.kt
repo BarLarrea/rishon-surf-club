@@ -15,6 +15,7 @@ data class User(
     var profileImageUrl: String? = null,
     var aboutMe: String? = null
 ) {
+    constructor() : this("", "", "", "", "", "")
     companion object {
         private const val ID_KEY = "id"
         private const val FIRST_NAME_KEY = "firstName"
