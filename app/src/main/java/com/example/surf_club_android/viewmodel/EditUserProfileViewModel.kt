@@ -1,5 +1,6 @@
 package com.example.surf_club_android.viewmodel
 
+import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -40,22 +41,37 @@ class EditUserProfileViewModel : ViewModel() {
         }
     }
 
-    fun updateUserProfile(updatedUser: User) {
+    fun updateUserProfile(updatedUser: User, newProfileImage: Bitmap?) {
         _isLoading.value = true
         val currentUser = FirebaseAuth.getInstance().currentUser
 
         if (currentUser != null) {
-            // Using the public method from Model instead of the private one
-            Model.shared.updateUser(updatedUser) { success ->
-                if (success) {
-                    _saveSuccess.postValue(true)
-                } else {
-                    _error.postValue("Failed to update profile")
+            if (newProfileImage != null) {
+                Model.shared.uploadProfileImage(newProfileImage, currentUser.uid) { imageUrl ->
+                    if (imageUrl != null) {
+                        val userWithNewImage = updatedUser.copy(profileImageUrl = imageUrl)
+                        updateUserData(userWithNewImage)
+                    } else {
+                        _error.postValue("Failed to update profile image")
+                        _isLoading.postValue(false)
+                    }
                 }
-                _isLoading.postValue(false)
+            } else {
+                updateUserData(updatedUser)
             }
         } else {
             _error.postValue("No user logged in")
+            _isLoading.postValue(false)
+        }
+    }
+
+    private fun updateUserData(updatedUser: User) {
+        Model.shared.updateUser(updatedUser) { success ->
+            if (success) {
+                _saveSuccess.postValue(true)
+            } else {
+                _error.postValue("Failed to update profile")
+            }
             _isLoading.postValue(false)
         }
     }

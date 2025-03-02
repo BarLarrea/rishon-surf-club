@@ -24,13 +24,20 @@ class FirebaseModel {
     private val storage = Firebase.storage
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    init {
-        val setting = firestoreSettings {
-            setLocalCacheSettings(memoryCacheSettings {  })
-        }
-
-        database.firestoreSettings = setting
+    companion object {
+        private var isFirestoreConfigured = false
     }
+
+    init {
+        if (!isFirestoreConfigured) {
+            val setting = firestoreSettings {
+                setLocalCacheSettings(memoryCacheSettings { })
+            }
+            database.firestoreSettings = setting
+            isFirestoreConfigured = true
+        }
+    }
+
 
     fun getAllPosts(callback: PostsCallback) {
         database.collection(Constants.COLLECTIONS.POSTS)
@@ -140,9 +147,6 @@ class FirebaseModel {
     fun signUp(
         email: String,
         password: String,
-        firstName: String,
-        lastName: String,
-        role: String,
         callback: (FirebaseUser?, String?) -> Unit
     ) {
         auth.createUserWithEmailAndPassword(email, password)
@@ -245,20 +249,14 @@ class FirebaseModel {
             }
     }
 
-    fun uploadImage(image: Bitmap, name: String, callback: (String?) -> Unit) {
-        val storageRef = storage.reference
-        val imageProfileRef = storageRef.child("images/$name.jpg")
-        val baos = ByteArrayOutputStream()
-        image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val data = baos.toByteArray()
-
-        val uploadTask = imageProfileRef.putBytes(data)
-        uploadTask
-            .addOnFailureListener { callback(null) }
-            .addOnSuccessListener { taskSnapshot ->
-                imageProfileRef.downloadUrl.addOnSuccessListener { uri ->
-                    callback(uri.toString())
-                }
+    fun updateUserProfileImage(userId: String, imageUrl: String, callback: (Boolean) -> Unit) {
+        database.collection(Constants.COLLECTIONS.USERS).document(userId)
+            .update("profileImageUrl", imageUrl)
+            .addOnSuccessListener {
+                callback(true)
+            }
+            .addOnFailureListener {
+                callback(false)
             }
     }
 }

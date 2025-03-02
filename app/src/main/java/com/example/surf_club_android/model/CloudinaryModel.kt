@@ -15,23 +15,30 @@ import java.io.FileOutputStream
 
 class CloudinaryModel {
 
+    companion object {
+        private var isInitialized = false
+    }
+
     init {
-        val config = mapOf(
-            "cloud_name" to BuildConfig.CLOUDINARY_CLOUD_NAME,
-            "api_key" to BuildConfig.CLOUDINARY_API_KEY,
-            "api_secret" to BuildConfig.CLOUDINARY_API_SECRET
-        )
-        Log.d("CloudinaryModel", "Cloudinary Config: cloud_name=${BuildConfig.CLOUDINARY_CLOUD_NAME}, " +
-                "api_key=${BuildConfig.CLOUDINARY_API_KEY}, api_secret=${BuildConfig.CLOUDINARY_API_SECRET}")
+        if (!isInitialized) {
+            val config = mapOf(
+                "cloud_name" to BuildConfig.CLOUDINARY_CLOUD_NAME,
+                "api_key" to BuildConfig.CLOUDINARY_API_KEY,
+                "api_secret" to BuildConfig.CLOUDINARY_API_SECRET
+            )
+            Log.d("CloudinaryModel", "Initializing Cloudinary: cloud_name=${BuildConfig.CLOUDINARY_CLOUD_NAME}")
 
-
-        MyApplication.Globals.context?.let { context ->
-            MediaManager.init(context, config)
-            MediaManager.get().globalUploadPolicy = GlobalUploadPolicy.Builder()
-                .maxConcurrentRequests(3)
-                .networkPolicy(UploadPolicy.NetworkType.UNMETERED)
-                .build()
-        } ?: Log.e("CloudinaryModel", "Application context is null!")
+            MyApplication.Globals.context?.let { context ->
+                MediaManager.init(context, config)
+                MediaManager.get().globalUploadPolicy = GlobalUploadPolicy.Builder()
+                    .maxConcurrentRequests(3)
+                    .networkPolicy(UploadPolicy.NetworkType.UNMETERED)
+                    .build()
+                isInitialized = true
+            } ?: Log.e("CloudinaryModel", "Application context is null!")
+        } else {
+            Log.d("CloudinaryModel", "MediaManager is already initialized, skipping.")
+        }
     }
 
     fun uploadBitmap(bitmap: Bitmap, onSuccess: (String) -> Unit, onError: (String) -> Unit) {

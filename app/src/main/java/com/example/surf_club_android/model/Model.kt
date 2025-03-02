@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import com.example.surf_club_android.base.EmptyCallback
 import com.example.surf_club_android.base.PostsCallback
 import com.example.surf_club_android.base.UsersCallback
 import com.example.surf_club_android.model.dao.AppLocalDb
@@ -211,6 +210,35 @@ class Model private constructor() {
         }
     }
 
+    fun uploadProfileImage(image: Bitmap, userId: String, callback: (String?) -> Unit) {
+        uploadImageToCloudinary(
+            image = image,
+            name = "profile_$userId",
+            onSuccess = { imageUrl ->
+                // Update the user's profile image URL in Firebase
+                firebaseModel.updateUserProfileImage(userId, imageUrl) { success ->
+                    if (success) {
+                        // Update local database
+                        roomExecutor.execute {
+                            val user = database.userDao().getUserById(userId)
+                            user?.let {
+                                val updatedUser = it.copy(profileImageUrl = imageUrl)
+                                database.userDao().updateUser(updatedUser)
+                            }
+                        }
+                        callback(imageUrl)
+                    } else {
+                        callback(null)
+                    }
+                }
+            },
+            onError = { error ->
+                Log.e("Model", "Error uploading profile image: $error")
+                callback(null)
+            }
+        )
+    }
+
     fun signIn(email: String, password: String, callback: (FirebaseUser?, String?) -> Unit) {
         firebaseModel.signIn(email, password, callback)
     }
@@ -295,7 +323,6 @@ class Model private constructor() {
 
     private fun uploadImageToCloudinary(
         image: Bitmap,
-        name: String,
         onSuccess: (String) -> Unit,
         onError: (String) -> Unit
     ) {
