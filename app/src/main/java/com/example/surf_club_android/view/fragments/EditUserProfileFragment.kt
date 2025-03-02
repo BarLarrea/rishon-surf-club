@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -22,8 +23,9 @@ import com.example.surf_club_android.databinding.FragmentEditUserProfileBinding
 import com.example.surf_club_android.model.CloudinaryModel
 import com.example.surf_club_android.model.User
 import com.example.surf_club_android.viewmodel.EditUserProfileViewModel
-class EditUserProfileFragment : Fragment() {
 
+
+class EditUserProfileFragment : Fragment() {
     private var _binding: FragmentEditUserProfileBinding? = null
     private val binding: FragmentEditUserProfileBinding
         get() = _binding ?: throw IllegalStateException("Binding is only valid between onCreateView and onDestroyView")
@@ -53,14 +55,6 @@ class EditUserProfileFragment : Fragment() {
         return _binding?.root ?: throw IllegalStateException("Binding cannot be null")
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setupObservers()
-        setupListeners()
-        viewModel.loadUserData()
-    }
-
     private fun setupObservers() {
         viewModel.user.observe(viewLifecycleOwner) { user ->
             user?.let { updateUI(it) }
@@ -82,6 +76,23 @@ class EditUserProfileFragment : Fragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupObservers()
+        setupListeners()
+        setupRoleDropdown()
+        viewModel.loadUserData()
+    }
+
+    private fun setupRoleDropdown() {
+        val roles = arrayOf("מדריך", "מתנדב", "בית הלוחם ת''א", "בית הלוחם ירושלים", "אקי''ם", "הצעד הבא")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, roles)
+        binding.actvRole.setAdapter(adapter)
+        binding.actvRole.setOnClickListener { binding.actvRole.showDropDown() }
+    }
+
+
     private fun setupListeners() {
         binding.btnEdit.setOnClickListener {
             val updatedUser = User(
@@ -89,7 +100,7 @@ class EditUserProfileFragment : Fragment() {
                 firstName = binding.etFirstName.text.toString(),
                 lastName = binding.etLastName.text.toString(),
                 email = binding.etEmail.text.toString(),
-                role = binding.etRole.text.toString(),
+                role = binding.actvRole.text.toString(),
                 aboutMe = binding.etAboutMe.text.toString(),
                 profileImageUrl = viewModel.user.value?.profileImageUrl.orEmpty()
             )
@@ -108,7 +119,7 @@ class EditUserProfileFragment : Fragment() {
         binding.etFirstName.setText(user.firstName)
         binding.etLastName.setText(user.lastName)
         binding.etEmail.setText(user.email)
-        binding.etRole.setText(user.role)
+        binding.actvRole.text.toString()
         binding.etAboutMe.setText(user.aboutMe)
 
         Glide.with(this)
