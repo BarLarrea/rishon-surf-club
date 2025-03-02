@@ -1,10 +1,12 @@
 package com.example.surf_club_android.model
 
-import androidx.annotation.Keep
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.example.surf_club_android.model.dao.Converters
 
 @Entity
+@TypeConverters(Converters::class)
 data class User(
     @PrimaryKey
     var id: String = "",
@@ -14,9 +16,13 @@ data class User(
     var password: String = "",
     var role: String = "",
     var profileImageUrl: String? = null,
-    var aboutMe: String? = null
+    var aboutMe: String? = null,
+
+    @TypeConverters(Converters::class)
+    var sessionIds: List<String> = emptyList()
 ) {
-    constructor() : this("", "", "", "", "", "", null, null)
+    constructor() : this("", "", "", "", "", "", null, null, emptyList())
+
     companion object {
         private const val ID_KEY = "id"
         private const val FIRST_NAME_KEY = "firstName"
@@ -26,6 +32,7 @@ data class User(
         private const val ROLE_KEY = "role"
         private const val PROFILE_IMAGE_URL_KEY = "profileImageUrl"
         private const val ABOUT_ME_KEY = "aboutMe"
+        private const val SESSION_IDS_KEY = "sessionIds"
 
         fun fromJSON(json: Map<String, Any>): User {
             return User(
@@ -36,7 +43,8 @@ data class User(
                 password = json[PASSWORD_KEY] as? String ?: "",
                 role = json[ROLE_KEY] as? String ?: "",
                 profileImageUrl = json[PROFILE_IMAGE_URL_KEY] as? String ?: "",
-                aboutMe = json[ABOUT_ME_KEY] as? String ?: ""
+                aboutMe = json[ABOUT_ME_KEY] as? String ?: "",
+                sessionIds = (json[SESSION_IDS_KEY] as? List<*>)?.mapNotNull { it as? String } ?: emptyList()
             )
         }
     }
@@ -50,6 +58,7 @@ data class User(
             PASSWORD_KEY to password,
             ROLE_KEY to role,
             PROFILE_IMAGE_URL_KEY to (profileImageUrl ?: ""),
-            ABOUT_ME_KEY to (aboutMe ?: "")
+            ABOUT_ME_KEY to (aboutMe ?: ""),
+            SESSION_IDS_KEY to sessionIds
         )
 }

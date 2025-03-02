@@ -249,6 +249,60 @@ class FirebaseModel {
             }
     }
 
+    fun addSessionToUser(userId: String, sessionId: String, callback: (Boolean) -> Unit) {
+        val userRef = database.collection(Constants.COLLECTIONS.USERS).document(userId)
+
+        userRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val user = document.toObject(User::class.java)
+                user?.let {
+                    val updatedSessions = it.sessionIds.toMutableList()
+                    if (!updatedSessions.contains(sessionId)) {
+                        updatedSessions.add(sessionId)
+                        userRef.update("sessionIds", updatedSessions)
+                            .addOnSuccessListener { callback(true) }
+                            .addOnFailureListener { callback(false) }
+                    } else {
+                        callback(true)
+                    }
+                }
+            } else {
+                callback(false)
+            }
+        }.addOnFailureListener {
+            callback(false)
+        }
+    }
+
+    fun getUserSessions(userId: String, callback: (List<Post>) -> Unit) {
+        val userRef = database.collection(Constants.COLLECTIONS.USERS).document(userId)
+
+        userRef.get().addOnSuccessListener { document ->
+            if (document.exists()) {
+                val user = document.toObject(User::class.java)
+                user?.let {
+                    if (it.sessionIds.isNotEmpty()) {
+                        database.collection(Constants.COLLECTIONS.POSTS)
+                            .whereIn("id", it.sessionIds)
+                            .get()
+                            .addOnSuccessListener { result ->
+                                val posts = result.documents.mapNotNull { doc -> Post.fromJSON(doc.data ?: emptyMap()) }
+                                callback(posts)
+                            }
+                            .addOnFailureListener { callback(emptyList()) }
+                    } else {
+                        callback(emptyList())
+                    }
+                }
+            } else {
+                callback(emptyList())
+            }
+        }.addOnFailureListener {
+            callback(emptyList())
+        }
+    }
+
+
     fun uploadProfileImage(image: Bitmap, userId: String, callback: (String?) -> Unit) {
         val storageRef = storage.reference
         val imageProfileRef = storageRef.child("profile_images/$userId.jpg")

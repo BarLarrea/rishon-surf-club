@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.surf_club_android.model.Model
+import com.example.surf_club_android.model.Post
 import com.example.surf_club_android.model.User
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -29,6 +30,17 @@ class UserProfileViewModel : ViewModel() {
             _isLoading.postValue(false)
         }
     }
+
+    private val _userSessions = MutableLiveData<List<Post>>()
+    val userSessions: LiveData<List<Post>> = _userSessions
+
+    fun loadUserSessions(userId: String) {
+        model.getAllUserPosts(userId) { sessions ->
+            _userSessions.postValue(sessions)
+        }
+    }
+
+
 
     fun updateUser(updatedUser: User) {
         viewModelScope.launch {
