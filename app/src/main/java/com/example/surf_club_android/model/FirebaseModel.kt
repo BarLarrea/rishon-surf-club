@@ -249,6 +249,23 @@ class FirebaseModel {
             }
     }
 
+    fun uploadProfileImage(image: Bitmap, userId: String, callback: (String?) -> Unit) {
+        val storageRef = storage.reference
+        val imageProfileRef = storageRef.child("profile_images/$userId.jpg")
+        val baos = ByteArrayOutputStream()
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        val data = baos.toByteArray()
+
+        val uploadTask = imageProfileRef.putBytes(data)
+        uploadTask
+            .addOnFailureListener { callback(null) }
+            .addOnSuccessListener { taskSnapshot ->
+                imageProfileRef.downloadUrl.addOnSuccessListener { uri ->
+                    callback(uri.toString())
+                }
+            }
+    }
+
     fun updateUserProfileImage(userId: String, imageUrl: String, callback: (Boolean) -> Unit) {
         database.collection(Constants.COLLECTIONS.USERS).document(userId)
             .update("profileImageUrl", imageUrl)
@@ -259,4 +276,6 @@ class FirebaseModel {
                 callback(false)
             }
     }
+
+
 }
