@@ -41,7 +41,6 @@ class FirebaseModel {
 
     fun getAllPosts(callback: PostsCallback) {
         database.collection(Constants.COLLECTIONS.POSTS)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
             .addOnCompleteListener {
                 when (it.isSuccessful) {
