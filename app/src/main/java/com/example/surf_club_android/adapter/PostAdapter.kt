@@ -14,8 +14,10 @@ import com.example.surf_club_android.model.Model
 import com.example.surf_club_android.model.Post
 import com.google.firebase.auth.FirebaseAuth
 
-class PostAdapter(private val isProfileView: Boolean) :
-    ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallback()) {
+class PostAdapter(
+    private val isProfileView: Boolean,
+    private val onPostRemoved: ((String) -> Unit)? = null
+) : ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -24,13 +26,14 @@ class PostAdapter(private val isProfileView: Boolean) :
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
-        holder.bind(getItem(position), currentUserId, isProfileView)
+        holder.bind(getItem(position), currentUserId, isProfileView, onPostRemoved)
     }
 
     class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bind(post: Post, currentUserId: String, isProfileView: Boolean) {
+        fun bind(post: Post, currentUserId: String, isProfileView: Boolean, onPostRemoved: ((String) -> Unit)?) {
             binding.apply {
+                // Fetch user details
                 Model.shared.getUser(post.author) { user ->
                     tvHostName.text = user?.let { "${it.firstName} ${it.lastName}" } ?: "Unknown Author"
 
@@ -45,7 +48,7 @@ class PostAdapter(private val isProfileView: Boolean) :
                 tvWindHeight.text = "${post.windSpeed} KM/H"
                 tvDescription.text = post.description
 
-                // If post image is empty or null, load default image
+                // Load post image (fallback to default if empty)
                 val postImageUrl = post.postImage.takeIf { it.isNotEmpty() } ?: R.drawable.main_logo
                 Glide.with(ivPostImage.context)
                     .load(postImageUrl)
@@ -54,13 +57,12 @@ class PostAdapter(private val isProfileView: Boolean) :
 
                 val isUserJoined = post.participants.contains(currentUserId)
 
-                // Buttons Styling
+                // Set button appearance
                 btnJoin.text = if (isUserJoined) "Leave" else "Join"
                 btnJoin.setTextColor(
                     if (isUserJoined) itemView.context.getColor(R.color.red)
                     else itemView.context.getColor(R.color.white)
                 )
-                btnJoin.setBackgroundColor(itemView.context.getColor(R.color.blue_primary)) // Always blue background
 
                 btnJoin.setOnClickListener {
                     Model.shared.toggleSessionParticipation(currentUserId, post.id) { success, isJoining ->
@@ -70,10 +72,16 @@ class PostAdapter(private val isProfileView: Boolean) :
                                 if (isJoining) itemView.context.getColor(R.color.red)
                                 else itemView.context.getColor(R.color.white)
                             )
+
+                            // Remove post from profile view if user leaves
+                            if (isProfileView && !isJoining) {
+                                onPostRemoved?.invoke(post.id)
+                            }
                         }
                     }
                 }
 
+                // Participants button styling
                 btnParticipants.setBackgroundColor(itemView.context.getColor(R.color.blue_primary))
                 btnParticipants.setTextColor(itemView.context.getColor(R.color.white))
 
@@ -81,6 +89,7 @@ class PostAdapter(private val isProfileView: Boolean) :
                     // TODO: Implement participants functionality
                 }
 
+                // Ensure join button is always visible
                 btnJoin.visibility = View.VISIBLE
             }
         }

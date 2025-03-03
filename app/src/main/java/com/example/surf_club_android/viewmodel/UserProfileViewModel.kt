@@ -40,6 +40,11 @@ class UserProfileViewModel : ViewModel() {
         }
     }
 
+    fun removeSession(postId: String) {
+        _userSessions.value = _userSessions.value?.filterNot { it.id == postId }
+    }
+
+
     fun updateUser(updatedUser: User) {
         viewModelScope.launch {
             _isLoading.value = true

@@ -37,18 +37,26 @@ class UserProfileFragment : Fragment() {
             viewModel.loadUserSessions(firebaseUser.uid)
         }
 
-        setupRecyclerView()
         setupObservers()
+        setupRecyclerView()
         setupEditProfileButton()
     }
 
     private fun setupRecyclerView() {
-        postAdapter = PostAdapter(isProfileView = true)
+        postAdapter = PostAdapter(
+            isProfileView = true,
+            onPostRemoved = { postId ->
+                viewModel.removeSession(postId)
+            }
+        )
+
         binding.sessionsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
         }
     }
+
+
 
     private fun setupEditProfileButton() {
         binding.editProfileButton.setOnClickListener {
