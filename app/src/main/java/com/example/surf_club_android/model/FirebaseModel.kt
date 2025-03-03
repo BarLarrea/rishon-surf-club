@@ -16,6 +16,7 @@ import com.example.surf_club_android.base.UsersCallback
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import java.io.ByteArrayOutputStream
 
 class FirebaseModel {
@@ -239,7 +240,33 @@ class FirebaseModel {
     }
 
     fun updateUser(user: User, callback: (Boolean) -> Unit) {
-        database.collection("users").document(user.id).set(user)
+        val updates = mutableMapOf<String, Any>().apply {
+            if (user.firstName.isNotBlank()) {
+                put("firstName", user.firstName)
+            }
+            if (user.lastName.isNotBlank()) {
+                put("lastName", user.lastName)
+            }
+            if (user.email.isNotBlank()) {
+                put("email", user.email)
+            }
+            if (user.role.isNotBlank()) {
+                put("role", user.role)
+            }
+            user.profileImageUrl?.takeIf { it.isNotBlank() }?.let { put("profileImageUrl", it) }
+            user.aboutMe?.takeIf { it.isNotBlank() }?.let { put("aboutMe", it) }
+            if (user.sessionIds.isNotEmpty()) {
+                put("sessionIds", user.sessionIds)
+            }
+        }
+
+        if (updates.isEmpty()) {
+            callback(false)
+            return
+        }
+
+        database.collection("users").document(user.id)
+            .update(updates)
             .addOnSuccessListener {
                 callback(true)
             }
@@ -247,6 +274,8 @@ class FirebaseModel {
                 callback(false)
             }
     }
+
+
 
     fun addSessionToUser(userId: String, sessionId: String, callback: (Boolean) -> Unit) {
         val userRef = database.collection(Constants.COLLECTIONS.USERS).document(userId)

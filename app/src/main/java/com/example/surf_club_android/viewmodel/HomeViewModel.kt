@@ -21,15 +21,19 @@ class HomeViewModel : ViewModel() {
         loadPosts()
     }
 
-    fun loadPosts() {
+    private fun loadPosts() {
         _isLoading.value = true
         Model.shared.getAllPosts { posts ->
-            _isLoading.value = false
+            _isLoading.postValue(false)
             if (posts.isNotEmpty()) {
-                _posts.value = posts
+                _posts.postValue(posts)
             } else {
-                _error.value = "No posts available"
+                _error.postValue("No posts available")
             }
         }
+    }
+
+    fun refreshPosts() {
+        loadPosts()
     }
 }
