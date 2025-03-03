@@ -36,12 +36,13 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        postAdapter = PostAdapter()
+        postAdapter = PostAdapter(isProfileView = false)
         binding.recyclerViewPosts.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
         }
     }
+
 
     private fun loadPosts() {
         binding.progressBar.visibility = View.VISIBLE

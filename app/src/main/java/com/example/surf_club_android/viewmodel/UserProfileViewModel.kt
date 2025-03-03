@@ -35,12 +35,10 @@ class UserProfileViewModel : ViewModel() {
     val userSessions: LiveData<List<Post>> = _userSessions
 
     fun loadUserSessions(userId: String) {
-        model.getAllUserPosts(userId) { sessions ->
+        model.getUserSessions(userId) { sessions ->
             _userSessions.postValue(sessions)
         }
     }
-
-
 
     fun updateUser(updatedUser: User) {
         viewModelScope.launch {

@@ -5,4 +5,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue_primary">#4A90E2</color>
     <color name="blue_primary_dark">#0D47A1</color>
+    <color name="red">#D32F2F</color>
+
 </resources>

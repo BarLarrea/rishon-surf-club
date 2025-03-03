@@ -330,5 +330,25 @@ class FirebaseModel {
             }
     }
 
+    fun updatePost(post: Post, callback: (Boolean) -> Unit) {
+        val postRef = database.collection("posts").document(post.id)
+        postRef.set(post)
+            .addOnSuccessListener { callback(true) }
+            .addOnFailureListener { callback(false) }
+    }
+
+    fun getPostById(postId: String, callback: (Post?) -> Unit) {
+        database.collection("posts").document(postId).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val post = task.result.toObject(Post::class.java)
+                    callback(post)
+                } else {
+                    callback(null)
+                }
+            }
+    }
+
+
 
 }

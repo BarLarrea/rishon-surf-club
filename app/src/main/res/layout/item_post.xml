@@ -135,27 +135,32 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_join"
             style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="170dp"
+            android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
             android:text="@string/join"
             android:textColor="@color/blue_primary_dark"
+            app:cornerRadius="8dp"
+            app:layout_constraintWidth_percent="0.45"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_participants"
             app:layout_constraintTop_toBottomOf="@id/iv_post_image" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_participants"
             style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="163dp"
+            android:layout_width="0dp"
             android:layout_height="48dp"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
             android:text="@string/participants"
             android:textColor="@color/blue_primary_dark"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:cornerRadius="8dp"
+            app:layout_constraintWidth_percent="0.45"
             app:layout_constraintStart_toEndOf="@id/btn_join"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/btn_join" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
