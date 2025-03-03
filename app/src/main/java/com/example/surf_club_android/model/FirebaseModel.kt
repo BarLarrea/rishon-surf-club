@@ -43,17 +43,20 @@ class FirebaseModel {
         database.collection(Constants.COLLECTIONS.POSTS)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .get()
-            .addOnCompleteListener {
-                when (it.isSuccessful) {
-                    true -> {
-                        val posts: MutableList<Post> = mutableListOf()
-                        for (json in it.result) {
-                            posts.add(Post.fromJSON(json.data))
-                        }
-                        callback(posts)
+            .addOnSuccessListener { querySnapshot ->
+                val posts = querySnapshot.documents.mapNotNull { document ->
+                    try {
+                        Post.fromJSON(document.data ?: emptyMap())
+                    } catch (e: Exception) {
+                        Log.e("FirebaseModel", "Error parsing post: ${document.id}", e)
+                        null
                     }
-                    false -> callback(listOf())
                 }
+                callback(posts)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirebaseModel", "Error getting posts", exception)
+                callback(emptyList())
             }
     }
 

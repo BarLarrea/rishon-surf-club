@@ -49,7 +49,7 @@ class HomeFragment : Fragment() {
             binding.progressBar.visibility = View.GONE
             if (posts.isNotEmpty()) {
                 posts.forEach { post ->
-                    Log.d("HomeFragment", "Post: ${post.id}, Author: ${post.authorName}")
+                    Log.d("HomeFragment", "Post: ${post.id}, Author: ${post.date}")
                 }
                 postAdapter.submitList(posts)
             } else {
