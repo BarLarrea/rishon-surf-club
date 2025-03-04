@@ -161,6 +161,7 @@
             android:layout_marginTop="16dp"
             android:contentDescription="@string/save_changes"
             android:text="@string/save_changes"
+            android:backgroundTint="#7B8CDE"
             app:cornerRadius="24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.496"
