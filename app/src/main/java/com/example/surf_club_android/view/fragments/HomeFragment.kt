@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.surf_club_android.databinding.FragmentHomeBinding
 import com.example.surf_club_android.adapter.PostAdapter
 import com.example.surf_club_android.viewmodel.HomeViewModel
+import androidx.navigation.fragment.findNavController
 
 class HomeFragment : Fragment() {
 
@@ -36,7 +37,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        postAdapter = PostAdapter(isProfileView = false)
+        postAdapter = PostAdapter(findNavController(),isProfileView = false)
         binding.recyclerViewPosts.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter

@@ -13,15 +13,18 @@ import com.example.surf_club_android.databinding.ItemPostBinding
 import com.example.surf_club_android.model.Model
 import com.example.surf_club_android.model.Post
 import com.google.firebase.auth.FirebaseAuth
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
 
 class PostAdapter(
+    private val navController: NavController,
     private val isProfileView: Boolean,
     private val onPostRemoved: ((String) -> Unit)? = null
 ) : ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
         val binding = ItemPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PostViewHolder(binding)
+        return PostViewHolder(binding, navController)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
@@ -29,7 +32,8 @@ class PostAdapter(
         holder.bind(getItem(position), currentUserId, isProfileView, onPostRemoved)
     }
 
-    class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+    class PostViewHolder(private val binding: ItemPostBinding, private val navController: NavController)
+        : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
         fun bind(post: Post, currentUserId: String, isProfileView: Boolean, onPostRemoved: ((String) -> Unit)?) {
             binding.apply {
@@ -86,7 +90,14 @@ class PostAdapter(
                 btnParticipants.setTextColor(itemView.context.getColor(R.color.white))
 
                 btnParticipants.setOnClickListener {
-                    // TODO: Implement participants functionality
+                    val bundle = bundleOf("postId" to post.id)
+
+                    val actionId = when {
+                        isProfileView -> R.id.action_profileFragment_to_participantsFragment
+                        else -> R.id.action_homeFragment_to_participantsFragment
+                    }
+
+                    navController.navigate(actionId, bundle)
                 }
 
                 // Ensure join button is always visible

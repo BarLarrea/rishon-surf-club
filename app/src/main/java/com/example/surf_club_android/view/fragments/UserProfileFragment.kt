@@ -43,8 +43,7 @@ class UserProfileFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        postAdapter = PostAdapter(
-            isProfileView = true,
+        postAdapter = PostAdapter(findNavController(),isProfileView = true,
             onPostRemoved = { postId ->
                 viewModel.removeSession(postId)
             }
@@ -55,8 +54,6 @@ class UserProfileFragment : Fragment() {
             adapter = postAdapter
         }
     }
-
-
 
     private fun setupEditProfileButton() {
         binding.editProfileButton.setOnClickListener {

@@ -18,6 +18,9 @@
         <action
             android:id="@+id/action_homeFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_participantsFragment"
+            app:destination="@id/participantsFragment" />
     </fragment>
 
     <fragment
@@ -43,6 +46,9 @@
         <action
             android:id="@+id/action_profileFragment_to_editUserProfileFragment"
             app:destination="@id/editUserProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_participantsFragment"
+            app:destination="@id/participantsFragment" />
     </fragment>
 
     <fragment
@@ -65,5 +71,15 @@
             android:id="@+id/action_createPostFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/participantsFragment"
+        android:name="com.example.surf_club_android.view.fragments.ParticipantsFragment"
+        android:label="Participants">
+        <argument
+            android:name="postId"
+            app:argType="string" />
+    </fragment>
+
 
 </navigation>
