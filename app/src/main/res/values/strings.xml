@@ -51,4 +51,8 @@
     <string name="no_sessions">No Sessions Found</string>
     <string name="no_sessions_found">You are not registered for any sessions yet.</string>
 
+    <string name="joined">Joined</string>
+    <string name="join_failed">Joining failed, please try again.</string>
+
+
 </resources>

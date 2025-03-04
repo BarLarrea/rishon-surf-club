@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
-import com.example.surf_club_android.adapter.SessionsAdapter
+import com.example.surf_club_android.adapter.PostAdapter
 import com.example.surf_club_android.databinding.FragmentUserProfileBinding
 import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +20,7 @@ class UserProfileFragment : Fragment() {
     private var _binding: FragmentUserProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: UserProfileViewModel
+    private lateinit var postAdapter: PostAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentUserProfileBinding.inflate(inflater, container, false)
@@ -33,15 +34,29 @@ class UserProfileFragment : Fragment() {
 
         FirebaseAuth.getInstance().currentUser?.let { firebaseUser ->
             viewModel.loadUser(firebaseUser.uid)
-            viewModel.loadUserSessions(firebaseUser.uid) // טוען את הסשנים של המשתמש
+            viewModel.loadUserSessions(firebaseUser.uid)
         }
 
         setupObservers()
+        setupRecyclerView()
         setupEditProfileButton()
-
-        // הגדרת ה-RecyclerView להצגת הסשנים
-        binding.sessionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
+
+    private fun setupRecyclerView() {
+        postAdapter = PostAdapter(
+            isProfileView = true,
+            onPostRemoved = { postId ->
+                viewModel.removeSession(postId)
+            }
+        )
+
+        binding.sessionsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = postAdapter
+        }
+    }
+
+
 
     private fun setupEditProfileButton() {
         binding.editProfileButton.setOnClickListener {
@@ -62,17 +77,13 @@ class UserProfileFragment : Fragment() {
                     .placeholder(R.drawable.ic_profile_placeholder)
                     .into(binding.profileImage)
 
-                // לאחר טעינת המשתמש, נטען גם את הסשנים
                 viewModel.loadUserSessions(it.id)
             }
         }
 
         viewModel.userSessions.observe(viewLifecycleOwner) { sessions ->
             if (sessions.isNotEmpty()) {
-                val adapter = SessionsAdapter(sessions) { post ->
-                    Toast.makeText(requireContext(), "Joined session: ${post.description}", Toast.LENGTH_SHORT).show()
-                }
-                binding.sessionsRecyclerView.adapter = adapter
+                postAdapter.submitList(sessions)
                 binding.sessionsRecyclerView.visibility = View.VISIBLE
                 binding.noSessionsTextView.visibility = View.GONE
             } else {

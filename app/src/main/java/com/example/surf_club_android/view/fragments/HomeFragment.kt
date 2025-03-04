@@ -1,28 +1,26 @@
 package com.example.surf_club_android.view.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.surf_club_android.databinding.FragmentHomeBinding
-import com.example.surf_club_android.model.Model
 import com.example.surf_club_android.adapter.PostAdapter
+import com.example.surf_club_android.viewmodel.HomeViewModel
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var viewModel: HomeViewModel
     private lateinit var postAdapter: PostAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
@@ -31,29 +29,32 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+
         setupRecyclerView()
-        loadPosts()
+        setupObservers()
     }
 
     private fun setupRecyclerView() {
-        postAdapter = PostAdapter()
+        postAdapter = PostAdapter(isProfileView = false)
         binding.recyclerViewPosts.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
         }
     }
 
-    private fun loadPosts() {
-        binding.progressBar.visibility = View.VISIBLE
-        Model.shared.getAllPosts { posts ->
-            binding.progressBar.visibility = View.GONE
-            if (posts.isNotEmpty()) {
-                posts.forEach { post ->
-                    Log.d("HomeFragment", "Post: ${post.id}, Author: ${post.date}")
-                }
-                postAdapter.submitList(posts)
-            } else {
-                Toast.makeText(requireContext(), "No posts available", Toast.LENGTH_SHORT).show()
+    private fun setupObservers() {
+        viewModel.posts.observe(viewLifecycleOwner) { posts ->
+            postAdapter.submitList(posts)
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            error?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
             }
         }
     }
