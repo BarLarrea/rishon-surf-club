@@ -182,6 +182,20 @@ class Model private constructor() {
         }
     }
 
+    fun getUserSessions(userId: String, callback: (List<Post>) -> Unit) {
+        firebaseModel.getUserSessions(userId) { posts ->
+            if (posts.isNotEmpty()) {
+                roomExecutor.execute {
+                    database.postDao().insertPosts(*posts.toTypedArray())
+                }
+            }
+            mainHandler.post {
+                callback(posts)
+            }
+        }
+    }
+
+
     fun getUser(id: String, callback: (User?) -> Unit) {
         firebaseModel.getUser(id) { user ->
             if (user != null) {
@@ -288,7 +302,6 @@ class Model private constructor() {
         FirebaseModel().updateUser(user, callback)
     }
 
-
     private fun uploadImageToCloudinary(
         image: Bitmap,
         name: String,
@@ -301,4 +314,59 @@ class Model private constructor() {
             onError = onError
         )
     }
+
+    fun toggleSessionParticipation(userId: String, postId: String, callback: (Boolean, Boolean) -> Unit) {
+        firebaseModel.getPostById(postId) { post ->
+            if (post != null) {
+                val updatedParticipants = post.participants.toMutableList()
+                val isJoining = !updatedParticipants.contains(userId)
+
+                if (isJoining) {
+                    updatedParticipants.add(userId)
+                } else {
+                    updatedParticipants.remove(userId)
+                }
+
+                val updatedPost = post.copy(participants = updatedParticipants)
+
+                firebaseModel.getUser(userId) { user ->
+                    if (user != null) {
+                        val updatedSessions = user.sessionIds.toMutableList()
+
+                        if (isJoining) {
+                            updatedSessions.add(postId)
+                        } else {
+                            updatedSessions.remove(postId)
+                        }
+
+                        val updatedUser = user.copy(sessionIds = updatedSessions)
+
+                        firebaseModel.updatePost(updatedPost) { postUpdated ->
+                            if (postUpdated) {
+                                firebaseModel.updateUser(updatedUser) { userUpdated ->
+                                    if (userUpdated) {
+                                        roomExecutor.execute {
+                                            database.postDao().insertPosts(updatedPost)
+                                            database.userDao().insertUsers(updatedUser)
+                                        }
+                                        callback(true, isJoining)
+                                    } else {
+                                        callback(false, isJoining)
+                                    }
+                                }
+                            } else {
+                                callback(false, isJoining)
+                            }
+                        }
+                    } else {
+                        callback(false, isJoining)
+                    }
+                }
+            } else {
+                callback(false, false)
+            }
+        }
+    }
+
+
 }

@@ -1,41 +1,46 @@
 package com.example.surf_club_android.adapter
 
-import android.annotation.SuppressLint
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.surf_club_android.databinding.ItemParticipantBinding
+import com.bumptech.glide.Glide
+import com.example.surf_club_android.R
 import com.example.surf_club_android.model.User
 
-class ParticipantAdapter : RecyclerView.Adapter<ParticipantAdapter.ViewHolder>() {
+class ParticipantAdapter : ListAdapter<User, ParticipantAdapter.ParticipantViewHolder>(DiffCallback()) {
 
-    private var participants: List<User> = listOf()
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun updateParticipants(newParticipants: List<User>) {
-        participants = newParticipants
-        notifyDataSetChanged()
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ParticipantViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_participant, parent, false)
+        return ParticipantViewHolder(view)
     }
 
-    inner class ViewHolder(private val binding: ItemParticipantBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    override fun onBindViewHolder(holder: ParticipantViewHolder, position: Int) {
+        val user = getItem(position)
+        holder.bind(user)
+    }
+
+    class ParticipantViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val nameText: TextView = itemView.findViewById(R.id.participantNameTextView)
+        private val profileImage: ImageView = itemView.findViewById(R.id.participantImageView)
 
         fun bind(user: User) {
-            binding.participantNameTextView.text = user.firstName
-            // TODO: Load user image if available
+            nameText.text = user.firstName + " " + user.lastName
+
+            Glide.with(itemView.context)
+                .load(user.profileImageUrl)
+                .placeholder(R.drawable.ic_profile_placeholder)
+                .into(profileImage)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemParticipantBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
-        )
-        return ViewHolder(binding)
+    class DiffCallback : DiffUtil.ItemCallback<User>() {
+        override fun areItemsTheSame(oldItem: User, newItem: User): Boolean = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: User, newItem: User): Boolean = oldItem == newItem
     }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(participants[position])
-    }
-
-    override fun getItemCount() = participants.size
 }
+

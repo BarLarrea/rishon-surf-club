@@ -2,8 +2,11 @@ package com.example.surf_club_android.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.example.surf_club_android.model.dao.Converters
 
 @Entity
+@TypeConverters(Converters::class)
 data class Post(
     @PrimaryKey val id: String,
     val author: String = "",
@@ -14,8 +17,13 @@ data class Post(
     val waveHeight: String,
     val windSpeed: String,
     val description: String,
-    val postImage: String
-) {
+    val postImage: String,
+    var participants: List<String> = emptyList()
+)
+
+{
+    constructor() : this("", "", "", "", "", "", "", "", "", "", emptyList())
+
     companion object {
         private const val ID_KEY = "id"
         private const val AUTHOR_KEY = "author"
@@ -27,6 +35,7 @@ data class Post(
         private const val WIND_SPEED_KEY = "windSpeed"
         private const val DESCRIPTION_KEY = "description"
         private const val POST_IMAGE_KEY = "postImage"
+        private const val PARTICIPANTS_KEY = "participants"
 
         fun fromJSON(json: Map<String, Any>): Post {
             return Post(
@@ -39,7 +48,8 @@ data class Post(
                 waveHeight = json[WAVE_HEIGHT_KEY] as? String ?: "",
                 windSpeed = json[WIND_SPEED_KEY] as? String ?: "",
                 description = json[DESCRIPTION_KEY] as? String ?: "",
-                postImage = json[POST_IMAGE_KEY] as? String ?: ""
+                postImage = json[POST_IMAGE_KEY] as? String ?: "",
+                participants = (json[PARTICIPANTS_KEY] as? List<String>) ?: emptyList()
             )
         }
     }
@@ -55,6 +65,7 @@ data class Post(
             WAVE_HEIGHT_KEY to waveHeight,
             WIND_SPEED_KEY to windSpeed,
             DESCRIPTION_KEY to description,
-            POST_IMAGE_KEY to postImage
+            POST_IMAGE_KEY to postImage,
+            PARTICIPANTS_KEY to participants
         )
 }

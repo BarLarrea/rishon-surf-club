@@ -8,7 +8,7 @@ import com.example.surf_club_android.model.Post
 import com.example.surf_club_android.model.User
 
 
-@Database(entities = [Post::class, User::class], version = 4)
+@Database(entities = [Post::class, User::class], version = 5)
 abstract class AppLocalDbRepository: RoomDatabase() {
     abstract fun postDao(): PostDao
     abstract fun userDao(): UserDao

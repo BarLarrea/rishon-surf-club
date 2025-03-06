@@ -31,9 +31,11 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <EditText
+            android:id="@+id/chatInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:autofillHints=""
             android:hint="@string/message"
             android:background="@drawable/message_input_background"
             android:padding="12dp"
@@ -42,6 +44,7 @@
             android:maxLines="1" />
 
         <ImageButton
+            android:id="@+id/sendButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/ic_send"
