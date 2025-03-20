@@ -32,6 +32,8 @@ roomRuntime = "2.7.0-alpha12"
 google-services = "4.4.2"
 picasso = "2.8"
 cloudinaryAndroid = "3.0.2"
+markwon = "4.6.2"
+
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -71,6 +73,8 @@ cloudinary-android = { module = "com.cloudinary:cloudinary-android", version.ref
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 google-auth-library-credentials = { module = "com.google.auth:google-auth-library-credentials", version = "1.19.0" }
+markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
+
 
 
 

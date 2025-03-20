@@ -146,5 +146,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)// Coroutines for asynchronous execution
     implementation(libs.google.auth.library.credentials)
     implementation(libs.google.auth.library.oauth2.http.v1180)
+    implementation(libs.markwon.core)
 
 }

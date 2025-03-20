@@ -86,7 +86,7 @@ class PostAdapter(
                 }
 
                 // Participants button styling
-                btnParticipants.setBackgroundColor(itemView.context.getColor(R.color.blue_primary))
+//                btnParticipants.setBackgroundColor(itemView.context.getColor(R.color.blue_primary))
                 btnParticipants.setTextColor(itemView.context.getColor(R.color.white))
 
                 btnParticipants.setOnClickListener {

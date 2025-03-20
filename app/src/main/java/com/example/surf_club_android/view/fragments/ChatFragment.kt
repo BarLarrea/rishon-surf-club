@@ -8,14 +8,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentChatWithKellyBinding
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.surf_club_android.network.GeminiService
 import com.example.surf_club_android.viewmodel.ChatViewModel
 import com.example.surf_club_android.viewmodel.ChatViewModelFactory
-import kotlinx.coroutines.launch
 
 
 class ChatFragment : Fragment() {
@@ -24,6 +22,7 @@ class ChatFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var chatAdapter: ChatAdapter
     private val messagesList = mutableListOf<Pair<String, Boolean>>()
+
 
     private val viewModel: ChatViewModel by viewModels {
         ChatViewModelFactory(GeminiService())
@@ -38,7 +37,8 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        chatAdapter = ChatAdapter(messagesList)
+        // Pass context to ChatAdapter
+        chatAdapter = ChatAdapter(messagesList, requireContext())
 
         binding.recyclerViewChat.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -56,18 +56,18 @@ class ChatFragment : Fragment() {
             val userMessage = chatInput.text.toString()
 
             if (userMessage.isNotEmpty()) {
-                messagesList.add(Pair(userMessage, true)) // ✅ Add user message
+                messagesList.add(Pair(userMessage, true)) // Add user message
                 chatAdapter.notifyItemInserted(messagesList.size - 1)
                 binding.recyclerViewChat.scrollToPosition(messagesList.size - 1)
 
-                viewModel.sendMessage(userMessage) // ✅ Send message to Gemini
+                viewModel.sendMessage(userMessage) // Send message to Gemini
 
-                chatInput.text.clear() // ✅ Clear the input field after sending
+                chatInput.text.clear() // Clear the input field after sending
             } else {
                 Toast.makeText(requireContext(), "Please enter a message", Toast.LENGTH_SHORT).show()
             }
         }
-
+        viewModel.sendInitialMessage()
     }
 
     override fun onDestroyView() {
@@ -75,3 +75,5 @@ class ChatFragment : Fragment() {
         _binding = null
     }
 }
+
+
