@@ -15,6 +15,8 @@ import com.example.surf_club_android.adapter.PostAdapter
 import com.example.surf_club_android.databinding.FragmentUserProfileBinding
 import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class UserProfileFragment : Fragment() {
 
@@ -96,10 +98,19 @@ class UserProfileFragment : Fragment() {
         }
 
         viewModel.userSessions.observe(viewLifecycleOwner) { sessions ->
-            postAdapter.submitList(sessions)
-            binding.sessionsRecyclerView.visibility = if (sessions.isNotEmpty()) View.VISIBLE else View.GONE
-            binding.noSessionsTextView.visibility = if (sessions.isEmpty()) View.VISIBLE else View.GONE
+            val sortedSessions = sessions.sortedByDescending {
+                try {
+                    LocalDate.parse(it.sessionDate.trim(), DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                } catch (e: Exception) {
+                    LocalDate.MIN
+                }
+            }
+
+            postAdapter.submitList(sortedSessions)
+            binding.sessionsRecyclerView.visibility = if (sortedSessions.isNotEmpty()) View.VISIBLE else View.GONE
+            binding.noSessionsTextView.visibility = if (sortedSessions.isEmpty()) View.VISIBLE else View.GONE
         }
+
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE

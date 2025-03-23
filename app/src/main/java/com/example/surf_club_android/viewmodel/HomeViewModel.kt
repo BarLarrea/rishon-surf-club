@@ -23,7 +23,7 @@ class HomeViewModel : ViewModel() {
 
     fun loadPosts() {
         _isLoading.value = true
-        Model.shared.getAllPosts { posts ->
+        Model.shared.getUpcomingPosts { posts ->
             _isLoading.postValue(false)
             if (posts.isNotEmpty()) {
                 _posts.postValue(posts)
@@ -31,9 +31,5 @@ class HomeViewModel : ViewModel() {
                 _error.postValue("No posts available")
             }
         }
-    }
-
-    fun refreshPosts() {
-        loadPosts()
     }
 }

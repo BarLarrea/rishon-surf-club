@@ -10,6 +10,10 @@ import com.example.surf_club_android.base.UsersCallback
 import com.example.surf_club_android.model.dao.AppLocalDb
 import com.example.surf_club_android.model.dao.AppLocalDbRepository
 import com.google.firebase.auth.FirebaseUser
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -24,50 +28,39 @@ class Model private constructor() {
         val shared = Model()
     }
 
-    fun getAllPosts(callback: PostsCallback) {
+
+
+    fun getUpcomingPosts(callback: (List<Post>) -> Unit) {
         firebaseModel.getAllPosts { posts ->
-            Log.d("TAG", "Getting posts from Firebase: $posts")
-            if (posts.isNotEmpty()) {
-                val postsToFetch = posts.count { it.author.isNotEmpty() }
-                if (postsToFetch == 0) {
-                    roomExecutor.execute {
-                        database.postDao().insertPosts(*posts.toTypedArray())
+            val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+
+            val today = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+
+            val upcomingPosts = posts.mapNotNull { post ->
+                try {
+                    val sessionDate = dateFormat.parse(post.sessionDate.trim())
+                    if (sessionDate != null && !sessionDate.before(today)) {
+                        post
+                    } else {
+                        null
                     }
-                    mainHandler.post {
-                        callback(posts)
-                    }
-                } else {
-                    val updatedPosts = posts.toMutableList()
-                    val counter = AtomicInteger(postsToFetch)
-                    for ((index, post) in updatedPosts.withIndex()) {
-                        if (post.author.isNotEmpty()) {
-                            Log.d("TAG", "Fetching user for post: ${post.id}")
-                            getUser(post.author) { user ->
-                                updatedPosts[index] = post.copy(
-                                    authorName = user?.firstName ?: "",
-                                    authorImage = user?.profileImageUrl ?: ""
-                                )
-                                if (counter.decrementAndGet() == 0) {
-                                    roomExecutor.execute {
-                                        database.postDao().insertPosts(*updatedPosts.toTypedArray())
-                                    }
-                                    mainHandler.post {
-                                        callback(updatedPosts)
-                                    }
-                                }
-                            }
-                        }
-                    }
+                } catch (e: Exception) {
+                    null
                 }
-            } else {
-                Log.d("TAG", "Getting posts from local database")
-                roomExecutor.execute {
-                    val localPosts = database.postDao().getAllPosts()
-                    mainHandler.post {
-                        callback(localPosts)
-                    }
+            }.sortedBy { post ->
+                try {
+                    dateFormat.parse(post.sessionDate.trim())
+                } catch (e: Exception) {
+                    null
                 }
             }
+
+            callback(upcomingPosts)
         }
     }
 
@@ -102,36 +95,6 @@ class Model private constructor() {
             } else {
                 Log.d("TAG", "Firebase add failed")
                 callback(false, null)
-            }
-        }
-    }
-
-    fun getAllUserPosts(id: String, callback: PostsCallback) {
-        firebaseModel.getAllUserPosts(id) { posts ->
-            Log.d("TAG", "Getting user posts from Firebase: $posts")
-            if (posts.isNotEmpty()) {
-                getUser(id) { user ->
-                    val updatedPosts = posts.map { post ->
-                        post.copy(
-                            authorName = user?.firstName ?: "",
-                            authorImage = user?.profileImageUrl ?: ""
-                        )
-                    }
-                    roomExecutor.execute {
-                        database.postDao().insertPosts(*updatedPosts.toTypedArray())
-                    }
-                    mainHandler.post {
-                        callback(updatedPosts)
-                    }
-                }
-            } else {
-                Log.d("TAG", "Getting user posts from local database")
-                roomExecutor.execute {
-                    val localPosts = database.postDao().getPostsByAuthor(id)
-                    mainHandler.post {
-                        callback(localPosts)
-                    }
-                }
             }
         }
     }
@@ -175,15 +138,7 @@ class Model private constructor() {
         firebaseModel.signIn(email, password, callback)
     }
 
-    fun signUp(
-        email: String,
-        password: String,
-        firstName: String,
-        lastName: String,
-        role: String,
-        bitmap: Bitmap?,
-        callback: (FirebaseUser?, String?) -> Unit
-    ) {
+    fun signUp(email: String, password: String, firstName: String, lastName: String, role: String, bitmap: Bitmap?, callback: (FirebaseUser?, String?) -> Unit) {
         firebaseModel.signUp(email, password) { firebaseUser, error ->
             if (firebaseUser != null) {
                 if (bitmap != null) {
@@ -206,15 +161,7 @@ class Model private constructor() {
         }
     }
 
-    private fun saveUserToFirebaseAndLocal(
-        firebaseUser: FirebaseUser,
-        firstName: String,
-        lastName: String,
-        email: String,
-        role: String,
-        imageUrl: String,
-        callback: (FirebaseUser?, String?) -> Unit
-    ) {
+    private fun saveUserToFirebaseAndLocal(firebaseUser: FirebaseUser, firstName: String, lastName: String, email: String, role: String, imageUrl: String, callback: (FirebaseUser?, String?) -> Unit) {
         firebaseModel.saveUser(firebaseUser, firstName, lastName, email, role, imageUrl) { success, saveError ->
             if (success) {
                 roomExecutor.execute {
@@ -225,26 +172,6 @@ class Model private constructor() {
                 mainHandler.post { callback(firebaseUser, null) }
             } else {
                 mainHandler.post { callback(null, saveError ?: "Error saving user to Firestore") }
-            }
-        }
-    }
-
-    fun getAllUsers(callback: UsersCallback) {
-        firebaseModel.getAllUsers { users ->
-            if (users.isNotEmpty()) {
-                roomExecutor.execute {
-                    database.userDao().insertUsers(*users.toTypedArray())
-                }
-                mainHandler.post {
-                    callback(users)
-                }
-            } else {
-                roomExecutor.execute {
-                    val localUsers = database.userDao().getAll()
-                    mainHandler.post {
-                        callback(localUsers)
-                    }
-                }
             }
         }
     }
@@ -261,12 +188,7 @@ class Model private constructor() {
         FirebaseModel().updateUser(user, callback)
     }
 
-    private fun uploadImageToCloudinary(
-        image: Bitmap,
-        name: String,
-        onSuccess: (String) -> Unit,
-        onError: (String) -> Unit
-    ) {
+    private fun uploadImageToCloudinary(image: Bitmap, name: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
         cloudinaryModel.uploadBitmap(
             bitmap = image,
             onSuccess = onSuccess,
@@ -326,6 +248,7 @@ class Model private constructor() {
             }
         }
     }
+
     fun updatePost(post: Post, newImage: Bitmap?, callback: (Boolean) -> Unit) {
         if (newImage != null) {
             // Upload new image first.
@@ -365,15 +288,108 @@ class Model private constructor() {
             callback(true)
         }
     }
+
+    fun getAllPosts(callback: PostsCallback) {
+        firebaseModel.getAllPosts { posts ->
+            Log.d("TAG", "Getting posts from Firebase: $posts")
+            if (posts.isNotEmpty()) {
+                val postsToFetch = posts.count { it.author.isNotEmpty() }
+                if (postsToFetch == 0) {
+                    roomExecutor.execute {
+                        database.postDao().insertPosts(*posts.toTypedArray())
+                    }
+                    mainHandler.post {
+                        callback(posts)
+                    }
+                } else {
+                    val updatedPosts = posts.toMutableList()
+                    val counter = AtomicInteger(postsToFetch)
+                    for ((index, post) in updatedPosts.withIndex()) {
+                        if (post.author.isNotEmpty()) {
+                            Log.d("TAG", "Fetching user for post: ${post.id}")
+                            getUser(post.author) { user ->
+                                updatedPosts[index] = post.copy(
+                                    authorName = user?.firstName ?: "",
+                                    authorImage = user?.profileImageUrl ?: ""
+                                )
+                                if (counter.decrementAndGet() == 0) {
+                                    roomExecutor.execute {
+                                        database.postDao().insertPosts(*updatedPosts.toTypedArray())
+                                    }
+                                    mainHandler.post {
+                                        callback(updatedPosts)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                Log.d("TAG", "Getting posts from local database")
+                roomExecutor.execute {
+                    val localPosts = database.postDao().getAllPosts()
+                    mainHandler.post {
+                        callback(localPosts)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getAllUserPosts(id: String, callback: PostsCallback) {
+        firebaseModel.getAllUserPosts(id) { posts ->
+            Log.d("TAG", "Getting user posts from Firebase: $posts")
+            if (posts.isNotEmpty()) {
+                getUser(id) { user ->
+                    val updatedPosts = posts.map { post ->
+                        post.copy(
+                            authorName = user?.firstName ?: "",
+                            authorImage = user?.profileImageUrl ?: ""
+                        )
+                    }
+                    roomExecutor.execute {
+                        database.postDao().insertPosts(*updatedPosts.toTypedArray())
+                    }
+                    mainHandler.post {
+                        callback(updatedPosts)
+                    }
+                }
+            } else {
+                Log.d("TAG", "Getting user posts from local database")
+                roomExecutor.execute {
+                    val localPosts = database.postDao().getPostsByAuthor(id)
+                    mainHandler.post {
+                        callback(localPosts)
+                    }
+                }
+            }
+        }
+    }
+
+    fun getAllUsers(callback: UsersCallback) {
+        firebaseModel.getAllUsers { users ->
+            if (users.isNotEmpty()) {
+                roomExecutor.execute {
+                    database.userDao().insertUsers(*users.toTypedArray())
+                }
+                mainHandler.post {
+                    callback(users)
+                }
+            } else {
+                roomExecutor.execute {
+                    val localUsers = database.userDao().getAll()
+                    mainHandler.post {
+                        callback(localUsers)
+                    }
+                }
+            }
+        }
+    }
+
     fun getCurrentUserRole(currentUserId: String, callback: (String?) -> Unit) {
         // This reuses your existing getUser function.
         getUser(currentUserId) { user ->
             callback(user?.role)
         }
     }
-
-
-
-
-
 }

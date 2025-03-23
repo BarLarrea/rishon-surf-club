@@ -1,5 +1,6 @@
 package com.example.surf_club_android.view.fragments
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,6 +13,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentCreatePostBinding
 import com.example.surf_club_android.model.Model
 import com.example.surf_club_android.model.Post
@@ -45,6 +48,7 @@ CreatePostFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -60,10 +64,11 @@ CreatePostFragment : Fragment() {
             showDatePicker()
         }
 
-        val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        val currentDate = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
         binding.tvDate.text = "Post Date: $currentDate"
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -73,7 +78,7 @@ CreatePostFragment : Fragment() {
         DatePickerDialog(requireContext(), { _, selectedYear, selectedMonth, selectedDay ->
             calendar.set(selectedYear, selectedMonth, selectedDay)
             sessionDate = calendar.time
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
             binding.tvSessionDate.text = "Session Date: ${dateFormat.format(sessionDate!!)}"
         }, year, month, day).show()
     }
@@ -109,7 +114,7 @@ CreatePostFragment : Fragment() {
             }
 
             // Role is "מדריך"; proceed to create the post.
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
             val post = Post(
                 id = UUID.randomUUID().toString(),
                 author = currentUserId,
@@ -123,12 +128,12 @@ CreatePostFragment : Fragment() {
 
             val bitmap: Bitmap? = selectedImageUri?.let { getBitmapFromUri(it) }
 
-            Model.shared.addPost(post, bitmap) { success, imageUrl ->
+            Model.shared.addPost(post, bitmap) { success, _ ->
                 activity?.runOnUiThread {
                     showLoading(false)
                     if (success) {
                         Toast.makeText(context, "Post created successfully", Toast.LENGTH_SHORT).show()
-                        // Optionally clear the form or navigate away
+                        findNavController().navigate(R.id.action_createPostFragment_to_homeFragment)
                     } else {
                         Toast.makeText(context, "Failed to create post", Toast.LENGTH_SHORT).show()
                     }
