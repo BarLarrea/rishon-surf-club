@@ -21,7 +21,7 @@ class HomeViewModel : ViewModel() {
         loadPosts()
     }
 
-    private fun loadPosts() {
+    fun loadPosts() {
         _isLoading.value = true
         Model.shared.getAllPosts { posts ->
             _isLoading.postValue(false)

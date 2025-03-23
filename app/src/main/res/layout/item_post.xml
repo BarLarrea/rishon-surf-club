@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -24,23 +25,54 @@
             app:layout_constraintTop_toTopOf="parent"
             app:strokeWidth="2dp"
             app:strokeColor="@color/blue_primary"
-
             app:shapeAppearanceOverlay="@style/RoundedImageView"
             tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/tv_host_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="126dp"
+            android:layout_height="17dp"
             android:layout_marginStart="28dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_update"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/iv_host_profile"
             app:layout_constraintTop_toTopOf="@id/iv_host_profile"
             tools:text="Tamar Zohar" />
 
+        <ImageButton
+            android:id="@+id/btn_update"
+            android:layout_width="61dp"
+            android:layout_height="28dp"
+            android:layout_marginEnd="20dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/update_post"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_edit"
+            app:layout_constraintBottom_toBottomOf="@id/tv_host_name"
+            app:layout_constraintEnd_toStartOf="@+id/btn_delete"
+            app:layout_constraintTop_toTopOf="@id/tv_host_name"
+            app:layout_constraintVertical_bias="1.0"
+            app:tint="@color/blue_primary"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <ImageButton
+            android:id="@+id/btn_delete"
+            android:layout_width="39dp"
+            android:layout_height="31dp"
+            android:layout_marginEnd="4dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/delete_post"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="@id/tv_host_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_host_name"
+            app:layout_constraintVertical_bias="1.0"
+            app:tint="@color/red"
+            tools:ignore="TouchTargetSizeCheck" />
 
         <View
             android:id="@+id/divider"
@@ -53,8 +85,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_host_profile" />
-
-
 
         <ImageView
             android:id="@+id/iv_calendar"
@@ -149,8 +179,6 @@
             app:layout_constraintTop_toBottomOf="@id/tv_description"
             tools:src="@tools:sample/backgrounds/scenic" />
 
-
-
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_join"
             style="@style/Widget.MaterialComponents.Button.TextButton"
@@ -180,8 +208,6 @@
             app:layout_constraintStart_toEndOf="@id/btn_join"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/btn_join" />
-
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

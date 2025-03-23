@@ -17,6 +17,7 @@ import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 class UserProfileFragment : Fragment() {
+
     private var _binding: FragmentUserProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: UserProfileViewModel
@@ -43,9 +44,27 @@ class UserProfileFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        postAdapter = PostAdapter(findNavController(),isProfileView = true,
+        postAdapter = PostAdapter(
+            isProfileView = true,
             onPostRemoved = { postId ->
                 viewModel.removeSession(postId)
+            },
+            onUpdate = { post ->
+                val bundle = Bundle().apply {
+                    putString("postId", post.id)
+                }
+                findNavController().navigate(R.id.action_profileFragment_to_updatePostFragment, bundle)
+            },
+            onParticipantsClick = onParticipantsClick@{ post ->
+                if (post.id.isBlank()) {
+                    android.util.Log.e("UserProfileFragment", "postId is blank, cannot navigate to participants.")
+                    return@onParticipantsClick
+                }
+
+                val bundle = Bundle().apply {
+                    putString("postId", post.id)
+                }
+                findNavController().navigate(R.id.action_profileFragment_to_participantsFragment, bundle)
             }
         )
 
@@ -54,6 +73,8 @@ class UserProfileFragment : Fragment() {
             adapter = postAdapter
         }
     }
+
+
 
     private fun setupEditProfileButton() {
         binding.editProfileButton.setOnClickListener {
@@ -75,6 +96,8 @@ class UserProfileFragment : Fragment() {
                     .into(binding.profileImage)
 
                 viewModel.loadUserSessions(it.id)
+                // Update adapter's isInstructor flag if needed.
+                // (If your adapter supports dynamic updates, you may want to recreate the adapter here.)
             }
         }
 
@@ -103,5 +126,11 @@ class UserProfileFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        viewModel.loadUserSessions(userId)
     }
 }

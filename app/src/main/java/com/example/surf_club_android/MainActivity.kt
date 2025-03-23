@@ -53,17 +53,14 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    // Inflate the menu with the logout button
     override fun onCreateOptionsMenu(menu: android.view.Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
-    // Handle menu item selection
     override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_logout -> {
-                // Log out using the Model and navigate to AuthActivity
                 Model.shared.signOut()
                 val intent = Intent(this, AuthActivity::class.java)
                 startActivity(intent)

@@ -367,6 +367,54 @@ class Model private constructor() {
             }
         }
     }
+    fun updatePost(post: Post, newImage: Bitmap?, callback: (Boolean) -> Unit) {
+        if (newImage != null) {
+            // Upload new image first.
+            uploadImageToCloudinary(newImage, post.id, onSuccess = { imageUrl ->
+                val updatedPost = post.copy(postImage = imageUrl)
+                firebaseModel.updatePost(updatedPost) { success ->
+                    if (success) {
+                        roomExecutor.execute {
+                            database.postDao().insertPosts(updatedPost)
+                            mainHandler.post { callback(true) }
+                        }
+                    } else {
+                        mainHandler.post { callback(false) }
+                    }
+                }
+            }, onError = { error ->
+                mainHandler.post { callback(false) }
+            })
+        } else {
+            // No new image: update the post directly.
+            firebaseModel.updatePost(post) { success ->
+                if (success) {
+                    roomExecutor.execute {
+                        database.postDao().insertPosts(post)
+                        mainHandler.post { callback(true) }
+                    }
+                } else {
+                    mainHandler.post { callback(false) }
+                }
+            }
+        }
+    }
+
+    fun deletePost(postId: String, callback: (Boolean) -> Unit) {
+        firebaseModel.deletePost(postId) {
+            // For simplicity, we assume deletion was successful if callback is invoked.
+            callback(true)
+        }
+    }
+    fun getCurrentUserRole(currentUserId: String, callback: (String?) -> Unit) {
+        // This reuses your existing getUser function.
+        getUser(currentUserId) { user ->
+            callback(user?.role)
+        }
+    }
+
+
+
 
 
 }

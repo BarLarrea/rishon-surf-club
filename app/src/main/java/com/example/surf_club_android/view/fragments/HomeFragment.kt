@@ -1,6 +1,7 @@
 package com.example.surf_club_android.view.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,8 @@ import com.example.surf_club_android.databinding.FragmentHomeBinding
 import com.example.surf_club_android.adapter.PostAdapter
 import com.example.surf_club_android.viewmodel.HomeViewModel
 import androidx.navigation.fragment.findNavController
+import com.example.surf_club_android.R
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
 
@@ -37,7 +40,34 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        postAdapter = PostAdapter(findNavController(),isProfileView = false)
+        postAdapter = PostAdapter(
+            isProfileView = false,
+            onPostRemoved = { deletedPostId ->
+                val updatedPosts = viewModel.posts.value?.filter { it.id != deletedPostId } ?: emptyList()
+                postAdapter.submitList(updatedPosts)
+            },
+            onUpdate = { post ->
+                val bundle = Bundle().apply { putString("postId", post.id) }
+                findNavController().navigate(R.id.action_homeFragment_to_updatePostFragment, bundle)
+            },
+            onParticipantsClick = onParticipantsClick@{ post ->
+                if (post.id.isBlank()) {
+                    Log.e("HomeFragment", "Cannot navigate – post.id is blank!")
+                    return@onParticipantsClick
+                }
+
+                val bundle = Bundle().apply { putString("postId", post.id) }
+                findNavController().navigate(R.id.action_homeFragment_to_participantsFragment, bundle)
+            }
+        )
+
+
+        binding.recyclerViewPosts.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = postAdapter
+        }
+
+
         binding.recyclerViewPosts.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
@@ -58,6 +88,12 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.progressBar.visibility = View.VISIBLE
+        viewModel.loadPosts()
     }
 
     override fun onDestroyView() {

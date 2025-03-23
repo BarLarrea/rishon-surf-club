@@ -213,8 +213,16 @@ class FirebaseModel {
             }
     }
 
-    fun getUser(id: String, callback: (User?) -> Unit) {
-        database.collection(Constants.COLLECTIONS.USERS).document(id).get()
+    fun getUser(id: String?, callback: (User?) -> Unit) {
+        if (id.isNullOrBlank()) {
+            Log.e("FirebaseModel", "getUser() called with invalid id: '$id'")
+            callback(null)
+            return
+        }
+
+        database.collection(Constants.COLLECTIONS.USERS)
+            .document(id)
+            .get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = task.result.toObject(User::class.java)
@@ -224,6 +232,7 @@ class FirebaseModel {
                 }
             }
     }
+
 
     fun getAllUsers(callback: UsersCallback) {
         database.collection(Constants.COLLECTIONS.USERS)
