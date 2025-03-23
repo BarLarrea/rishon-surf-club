@@ -19,10 +19,10 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/btnAddImage"
+            android:id="@+id/btnUpdateImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Image"
+            android:text="Update Image"
             android:backgroundTint="#7B8CDE"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,7 +36,7 @@
             android:text="Post Date: "
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnAddImage" />
+            app:layout_constraintTop_toBottomOf="@id/btnUpdateImage" />
 
         <TextView
             android:id="@+id/tvSessionDate"
@@ -48,12 +48,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDate" />
 
+        <!-- Added TextView for Post ID -->
+        <TextView
+            android:id="@+id/tvPostId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Post ID: "
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSessionDate" />
+
         <Button
-            android:id="@+id/btnSelectSessionDate"
+            android:id="@+id/btnUpdateSessionDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="128dp"
-            android:text="Select Date"
+            android:text="Update Date"
             android:backgroundTint="#7B8CDE"
             app:layout_constraintBottom_toBottomOf="@id/tvSessionDate"
             app:layout_constraintStart_toEndOf="@id/tvSessionDate"
@@ -67,7 +78,7 @@
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvSessionDate">
+            app:layout_constraintTop_toBottomOf="@id/tvPostId">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etWaveHeight"
@@ -111,11 +122,11 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/btnCreatePost"
+            android:id="@+id/btnUpdatePost"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Create Post"
+            android:text="Update Post"
             android:backgroundTint="#7B8CDE"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

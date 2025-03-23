@@ -19,7 +19,8 @@ import com.example.surf_club_android.viewmodel.AuthViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CreatePostFragment : Fragment() {
+class
+CreatePostFragment : Fragment() {
 
     private var _binding: FragmentCreatePostBinding? = null
     private val binding get() = _binding!!
@@ -97,28 +98,40 @@ class CreatePostFragment : Fragment() {
             return
         }
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val post = Post(
-            id = UUID.randomUUID().toString(),
-            author = currentUserId,
-            date = postDate,
-            sessionDate = dateFormat.format(sessionDate!!),
-            waveHeight = waveHeight,
-            windSpeed = windSpeed,
-            description = description,
-            postImage = ""
-        )
+        // Check the user's role before creating the post.
+        Model.shared.getUser(currentUserId) { user ->
+            if (user == null || user.role != "מדריך") {
+                activity?.runOnUiThread {
+                    showLoading(false)
+                    Toast.makeText(context, "Only instructors allowed to upload posts", Toast.LENGTH_LONG).show()
+                }
+                return@getUser
+            }
 
-        val bitmap: Bitmap? = selectedImageUri?.let { getBitmapFromUri(it) }
+            // Role is "מדריך"; proceed to create the post.
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val post = Post(
+                id = UUID.randomUUID().toString(),
+                author = currentUserId,
+                date = postDate,
+                sessionDate = dateFormat.format(sessionDate!!),
+                waveHeight = waveHeight,
+                windSpeed = windSpeed,
+                description = description,
+                postImage = ""
+            )
 
-        Model.shared.addPost(post, bitmap) { success, imageUrl ->
-            activity?.runOnUiThread {
-                showLoading(false)
-                if (success) {
-                    Toast.makeText(context, "Post created successfully", Toast.LENGTH_SHORT).show()
-                    // Navigation logic can be added here
-                } else {
-                    Toast.makeText(context, "Failed to create post", Toast.LENGTH_SHORT).show()
+            val bitmap: Bitmap? = selectedImageUri?.let { getBitmapFromUri(it) }
+
+            Model.shared.addPost(post, bitmap) { success, imageUrl ->
+                activity?.runOnUiThread {
+                    showLoading(false)
+                    if (success) {
+                        Toast.makeText(context, "Post created successfully", Toast.LENGTH_SHORT).show()
+                        // Optionally clear the form or navigate away
+                    } else {
+                        Toast.makeText(context, "Failed to create post", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

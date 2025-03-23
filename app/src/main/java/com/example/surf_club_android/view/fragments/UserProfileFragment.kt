@@ -17,6 +17,7 @@ import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 class UserProfileFragment : Fragment() {
+
     private var _binding: FragmentUserProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: UserProfileViewModel
@@ -43,20 +44,20 @@ class UserProfileFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        // Determine instructor status from the current user, defaulting to false if not yet available.
+        val isInstructor = viewModel.user.value?.role == "מדריך"
+        android.util.Log.d("Madrich", "In bind(): isInstructor = $isInstructor for post id: ${viewModel.user.value?.role}")
         postAdapter = PostAdapter(
             isProfileView = true,
             onPostRemoved = { postId ->
                 viewModel.removeSession(postId)
             }
         )
-
         binding.sessionsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
         }
     }
-
-
 
     private fun setupEditProfileButton() {
         binding.editProfileButton.setOnClickListener {
@@ -78,6 +79,8 @@ class UserProfileFragment : Fragment() {
                     .into(binding.profileImage)
 
                 viewModel.loadUserSessions(it.id)
+                // Update adapter's isInstructor flag if needed.
+                // (If your adapter supports dynamic updates, you may want to recreate the adapter here.)
             }
         }
 

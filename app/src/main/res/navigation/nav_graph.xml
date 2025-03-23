@@ -18,6 +18,10 @@
         <action
             android:id="@+id/action_homeFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
+        <!-- Added action to update post -->
+        <action
+            android:id="@+id/action_homeFragment_to_updatePostFragment"
+            app:destination="@id/updatePostFragment" />
     </fragment>
 
     <fragment
@@ -65,5 +69,12 @@
             android:id="@+id/action_createPostFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
     </fragment>
+
+    <!-- New update post destination -->
+    <fragment
+        android:id="@+id/updatePostFragment"
+        android:name="com.example.surf_club_android.view.fragments.UpdatePostFragment"
+        android:label="Update Post"
+        tools:layout="@layout/fragment_update_post" />
 
 </navigation>

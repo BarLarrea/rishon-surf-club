@@ -53,6 +53,10 @@
 
     <string name="joined">Joined</string>
     <string name="join_failed">Joining failed, please try again.</string>
+    <string name="update_post">Update post</string>
+    <string name="delete_post">Delete post</string>
+    <string name="post_date">Post Date: %s</string>
+    <string name="session_date">Session Date: %s</string>
 
 
 </resources>
