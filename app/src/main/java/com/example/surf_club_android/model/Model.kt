@@ -71,52 +71,6 @@ class Model private constructor() {
         }
     }
 
-    fun getLastFourPosts(callback: PostsCallback) {
-        firebaseModel.getLastFourPosts { posts ->
-            Log.d("TAG", "Getting last four posts from Firebase: $posts")
-            if (posts.isNotEmpty()) {
-                val postsToFetch = posts.count { it.author.isNotEmpty() }
-                if (postsToFetch == 0) {
-                    roomExecutor.execute {
-                        database.postDao().insertPosts(*posts.toTypedArray())
-                    }
-                    mainHandler.post {
-                        callback(posts)
-                    }
-                } else {
-                    val updatedPosts = posts.toMutableList()
-                    val counter = AtomicInteger(postsToFetch)
-                    for ((index, post) in updatedPosts.withIndex()) {
-                        if (post.author.isNotEmpty()) {
-                            getUser(post.author) { user ->
-                                updatedPosts[index] = post.copy(
-                                    authorName = user?.firstName ?: "",
-                                    authorImage = user?.profileImageUrl ?: ""
-                                )
-                                if (counter.decrementAndGet() == 0) {
-                                    roomExecutor.execute {
-                                        database.postDao().insertPosts(*updatedPosts.toTypedArray())
-                                    }
-                                    mainHandler.post {
-                                        callback(updatedPosts)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                Log.d("TAG", "Getting last four posts from local database")
-                roomExecutor.execute {
-                    val localPosts = database.postDao().getLastFourPosts()
-                    mainHandler.post {
-                        callback(localPosts)
-                    }
-                }
-            }
-        }
-    }
-
     fun addPost(post: Post, profileImage: Bitmap?, callback: (Boolean, String?) -> Unit) {
         if (profileImage != null) {
             uploadImageToCloudinary(
@@ -195,14 +149,15 @@ class Model private constructor() {
         }
     }
 
-
     fun getUser(id: String, callback: (User?) -> Unit) {
         firebaseModel.getUser(id) { user ->
             if (user != null) {
                 roomExecutor.execute {
                     database.userDao().insertUsers(user)
                 }
-                mainHandler.post { callback(user) }
+                mainHandler.post {
+                    callback(user)
+                }
             } else {
                 roomExecutor.execute {
                     val localUser = database.userDao().getUserById(id)

@@ -48,6 +48,7 @@ class UserProfileFragment : Fragment() {
             isProfileView = true,
             onPostRemoved = { postId ->
                 viewModel.removeSession(postId)
+                parentFragmentManager.setFragmentResult("shouldRefreshHome", Bundle())
             },
             onUpdate = { post ->
                 val bundle = Bundle().apply {
@@ -55,26 +56,18 @@ class UserProfileFragment : Fragment() {
                 }
                 findNavController().navigate(R.id.action_profileFragment_to_updatePostFragment, bundle)
             },
-            onParticipantsClick = onParticipantsClick@{ post ->
-                if (post.id.isBlank()) {
-                    android.util.Log.e("UserProfileFragment", "postId is blank, cannot navigate to participants.")
-                    return@onParticipantsClick
-                }
-
+            onParticipantsClick = { post ->
                 val bundle = Bundle().apply {
                     putString("postId", post.id)
                 }
                 findNavController().navigate(R.id.action_profileFragment_to_participantsFragment, bundle)
             }
         )
-
         binding.sessionsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
         }
     }
-
-
 
     private fun setupEditProfileButton() {
         binding.editProfileButton.setOnClickListener {
@@ -96,20 +89,13 @@ class UserProfileFragment : Fragment() {
                     .into(binding.profileImage)
 
                 viewModel.loadUserSessions(it.id)
-                // Update adapter's isInstructor flag if needed.
-                // (If your adapter supports dynamic updates, you may want to recreate the adapter here.)
             }
         }
 
         viewModel.userSessions.observe(viewLifecycleOwner) { sessions ->
-            if (sessions.isNotEmpty()) {
-                postAdapter.submitList(sessions)
-                binding.sessionsRecyclerView.visibility = View.VISIBLE
-                binding.noSessionsTextView.visibility = View.GONE
-            } else {
-                binding.sessionsRecyclerView.visibility = View.GONE
-                binding.noSessionsTextView.visibility = View.VISIBLE
-            }
+            postAdapter.submitList(sessions)
+            binding.sessionsRecyclerView.visibility = if (sessions.isNotEmpty()) View.VISIBLE else View.GONE
+            binding.noSessionsTextView.visibility = if (sessions.isEmpty()) View.VISIBLE else View.GONE
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
@@ -123,14 +109,14 @@ class UserProfileFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onResume() {
         super.onResume()
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         viewModel.loadUserSessions(userId)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -1,20 +1,18 @@
 package com.example.surf_club_android.view.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.surf_club_android.databinding.FragmentHomeBinding
-import com.example.surf_club_android.adapter.PostAdapter
-import com.example.surf_club_android.viewmodel.HomeViewModel
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.surf_club_android.R
-import com.google.firebase.auth.FirebaseAuth
+import com.example.surf_club_android.adapter.PostAdapter
+import com.example.surf_club_android.databinding.FragmentHomeBinding
+import com.example.surf_club_android.viewmodel.HomeViewModel
 
 class HomeFragment : Fragment() {
 
@@ -23,18 +21,17 @@ class HomeFragment : Fragment() {
     private lateinit var viewModel: HomeViewModel
     private lateinit var postAdapter: PostAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-
+        parentFragmentManager.setFragmentResultListener("shouldRefreshHome", viewLifecycleOwner) { _, _ ->
+            viewModel.loadPosts()
+        }
         setupRecyclerView()
         setupObservers()
     }
@@ -47,27 +44,18 @@ class HomeFragment : Fragment() {
                 postAdapter.submitList(updatedPosts)
             },
             onUpdate = { post ->
-                val bundle = Bundle().apply { putString("postId", post.id) }
+                val bundle = Bundle().apply {
+                    putString("postId", post.id)
+                }
                 findNavController().navigate(R.id.action_homeFragment_to_updatePostFragment, bundle)
             },
-            onParticipantsClick = onParticipantsClick@{ post ->
-                if (post.id.isBlank()) {
-                    Log.e("HomeFragment", "Cannot navigate – post.id is blank!")
-                    return@onParticipantsClick
+            onParticipantsClick = { post ->
+                val bundle = Bundle().apply {
+                    putString("postId", post.id)
                 }
-
-                val bundle = Bundle().apply { putString("postId", post.id) }
                 findNavController().navigate(R.id.action_homeFragment_to_participantsFragment, bundle)
             }
         )
-
-
-        binding.recyclerViewPosts.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = postAdapter
-        }
-
-
         binding.recyclerViewPosts.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
@@ -90,11 +78,10 @@ class HomeFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        binding.progressBar.visibility = View.VISIBLE
-        viewModel.loadPosts()
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        viewModel.loadPosts()
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

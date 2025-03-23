@@ -1,3 +1,4 @@
+
 package com.example.surf_club_android.adapter
 
 import android.annotation.SuppressLint
@@ -5,6 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +16,8 @@ import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.ItemPostBinding
 import com.example.surf_club_android.model.Model
 import com.example.surf_club_android.model.Post
+import com.example.surf_club_android.viewmodel.HomeViewModel
+import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 class PostAdapter(
@@ -50,15 +55,29 @@ class PostAdapter(
             onParticipantsClick: ((Post) -> Unit)?
         ) {
             binding.apply {
-                // --- הצגת שם ותמונה של המחבר ---
                 Model.shared.getUser(post.author) { user ->
-                    tvHostName.text = user?.let { "${it.firstName} ${it.lastName}" } ?: "Unknown Author"
+                    if (user == null) {
+                        Log.e("PostAdapter", "❌ getUser returned null for authorId: ${post.author}")
+                        tvHostName.text = "Unknown Author"
+
+                        Glide.with(ivHostProfile.context)
+                            .load(R.drawable.user_profile_default)
+                            .circleCrop()
+                            .into(ivHostProfile)
+
+                        btnUpdate.visibility = View.GONE
+                        btnDelete.visibility = View.GONE
+                        return@getUser
+                    }
+
+                    tvHostName.text = "${user.firstName} ${user.lastName}"
 
                     Glide.with(ivHostProfile.context)
-                        .load(user?.profileImageUrl?.takeIf { it.isNotEmpty() } ?: R.drawable.user_profile_default)
+                        .load(user.profileImageUrl?.takeIf { it.isNotEmpty() } ?: R.drawable.user_profile_default)
                         .circleCrop()
                         .into(ivHostProfile)
 
+                    //check if the current user is the author of the post
                     val isOwner = post.author == currentUserId
                     btnUpdate.visibility = if (isOwner) View.VISIBLE else View.GONE
                     btnDelete.visibility = if (isOwner) View.VISIBLE else View.GONE
@@ -78,7 +97,6 @@ class PostAdapter(
                     }
                 }
 
-                // --- הצגת פרטי הפוסט ---
                 tvDate.text = post.sessionDate
                 tvWaveHeight.text = "${post.waveHeight} Meter"
                 tvWindHeight.text = "${post.windSpeed} KM/H"
@@ -90,7 +108,6 @@ class PostAdapter(
                     .centerCrop()
                     .into(ivPostImage)
 
-                // --- לחצן הצטרפות / עזיבה ---
                 if (currentUserId.isBlank()) {
                     btnJoin.text = "Login to Join"
                     btnJoin.isEnabled = false
@@ -116,6 +133,18 @@ class PostAdapter(
                                 if (isProfileView && !isJoining) {
                                     onPostRemoved?.invoke(post.id)
                                 }
+
+                                val context = itemView.context
+                                val viewModelStoreOwner = context as? ViewModelStoreOwner
+                                viewModelStoreOwner?.let {
+                                    if (isProfileView) {
+                                        val profileVM = ViewModelProvider(it)[UserProfileViewModel::class.java]
+                                        profileVM.loadUserSessions(currentUserId)
+                                    } else {
+                                        val homeVM = ViewModelProvider(it)[HomeViewModel::class.java]
+                                        homeVM.loadPosts()
+                                    }
+                                }
                             }
                         }
                     }
@@ -123,7 +152,7 @@ class PostAdapter(
 
                 btnParticipants.setOnClickListener {
                     if (post.id.isBlank()) {
-                        Log.e("PostAdapter", "❌ Cannot navigate: post.id is blank")
+                        Log.e("PostAdapter", "Cannot navigate: post.id is blank")
                         return@setOnClickListener
                     }
                     onParticipantsClick?.invoke(post)
@@ -131,11 +160,9 @@ class PostAdapter(
 
                 btnParticipants.setBackgroundColor(itemView.context.getColor(R.color.blue_primary))
                 btnParticipants.setTextColor(itemView.context.getColor(R.color.white))
-
                 btnJoin.visibility = View.VISIBLE
             }
         }
-
     }
 
     class PostDiffCallback : DiffUtil.ItemCallback<Post>() {
@@ -143,8 +170,3 @@ class PostAdapter(
         override fun areContentsTheSame(oldItem: Post, newItem: Post): Boolean = oldItem == newItem
     }
 }
-
-
-
-
-
