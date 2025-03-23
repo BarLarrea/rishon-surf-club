@@ -32,6 +32,9 @@ class HomeFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener("shouldRefreshHome", viewLifecycleOwner) { _, _ ->
             viewModel.loadPosts()
         }
+        parentFragmentManager.setFragmentResultListener("postUpdated", viewLifecycleOwner) { _, _ ->
+            viewModel.loadPosts()
+        }
         setupRecyclerView()
         setupObservers()
     }

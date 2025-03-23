@@ -30,12 +30,15 @@ class UserProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel = ViewModelProvider(this)[UserProfileViewModel::class.java]
-
         FirebaseAuth.getInstance().currentUser?.let { firebaseUser ->
             viewModel.loadUser(firebaseUser.uid)
             viewModel.loadUserSessions(firebaseUser.uid)
+        }
+
+        parentFragmentManager.setFragmentResultListener("postUpdated", viewLifecycleOwner) { _, _ ->
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setFragmentResultListener
+            viewModel.loadUserSessions(userId)
         }
 
         setupObservers()

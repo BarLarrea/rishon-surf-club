@@ -167,6 +167,10 @@ class Model private constructor() {
         }
     }
 
+    fun getPostById(postId: String, callback: (Post?) -> Unit) {
+        firebaseModel.getPostById(postId, callback)
+    }
+
     fun signIn(email: String, password: String, callback: (FirebaseUser?, String?) -> Unit) {
         firebaseModel.signIn(email, password, callback)
     }

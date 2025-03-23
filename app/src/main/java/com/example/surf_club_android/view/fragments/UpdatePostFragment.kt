@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentUpdatePostBinding
@@ -28,7 +28,7 @@ class UpdatePostFragment : Fragment() {
     private val binding get() = _binding!!
 
     // Using Safe Args. Adjust type if needed.
-    private val args: UpdatePostFragment by navArgs()
+    private lateinit var postId: String
     private lateinit var post: Post
     private var selectedImageUri: Uri? = null
 
@@ -46,9 +46,29 @@ class UpdatePostFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        post = args.post
-        setupViews()
-        setupListeners()
+
+        val postId = arguments?.getString("postId")
+        if (postId == null) {
+            Log.e("UpdatePostFragment", "postId is missing from arguments")
+            Toast.makeText(requireContext(), "Missing post ID", Toast.LENGTH_SHORT).show()
+            findNavController().popBackStack()
+            return
+        }
+
+        this.postId = postId
+
+        Model.shared.getPostById(postId) { fetchedPost:Post? ->
+            if (fetchedPost == null) {
+                Log.e("UpdatePostFragment", "Post with ID $postId not found.")
+                Toast.makeText(requireContext(), "Post not found", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+                return@getPostById
+            }
+
+            this.post = fetchedPost
+            setupViews()
+            setupListeners()
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -118,6 +138,7 @@ class UpdatePostFragment : Fragment() {
                 progressBar.visibility = View.GONE
                 btnUpdatePost.isEnabled = true
                 if (success) {
+                    parentFragmentManager.setFragmentResult("postUpdated", Bundle())
                     Toast.makeText(requireContext(), "Post updated successfully", Toast.LENGTH_SHORT).show()
                     findNavController().navigateUp()
                 } else {
