@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.surf_club_android.R
-import com.example.surf_club_android.adapter.PostAdapter
+import com.example.surf_club_android.view.fragments.adapters.PostAdapter
 import com.example.surf_club_android.databinding.FragmentHomeBinding
 import com.example.surf_club_android.viewmodel.HomeViewModel
 
@@ -80,11 +80,6 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        viewModel.loadPosts()
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

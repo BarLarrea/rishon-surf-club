@@ -1,5 +1,5 @@
 
-package com.example.surf_club_android.adapter
+package com.example.surf_club_android.view.fragments.adapters
 
 import android.annotation.SuppressLint
 import android.util.Log

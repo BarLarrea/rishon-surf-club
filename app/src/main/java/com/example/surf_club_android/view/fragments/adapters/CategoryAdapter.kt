@@ -1,4 +1,4 @@
-package com.example.surf_club_android.adapter
+package com.example.surf_club_android.view.fragments.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,13 +6,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.ItemCategoryBinding
-import com.example.surf_club_android.databinding.ItemCategorySummaryBinding
-import com.example.surf_club_android.model.Category
 import com.example.surf_club_android.model.User
 
-class CategoryAdapter : ListAdapter<Map.Entry<String, List<User>>, CategoryAdapter.CategoryViewHolder>(DiffCallback()) {
+class CategoryAdapter : ListAdapter<Map.Entry<String, List<User>>, CategoryAdapter.CategoryViewHolder>(
+    DiffCallback()
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
         val binding =

@@ -61,13 +61,21 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_logout -> {
-                Model.shared.signOut()
-                val intent = Intent(this, AuthActivity::class.java)
-                startActivity(intent)
-                finish()
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure you want to log out?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        Model.shared.signOut()
+                        val intent = Intent(this, AuthActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                    .setNegativeButton("Cancel", null)
+                    .show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 }
