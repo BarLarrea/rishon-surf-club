@@ -11,15 +11,19 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
-import com.example.surf_club_android.adapter.SessionsAdapter
+import com.example.surf_club_android.view.fragments.adapters.PostAdapter
 import com.example.surf_club_android.databinding.FragmentUserProfileBinding
 import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class UserProfileFragment : Fragment() {
+
     private var _binding: FragmentUserProfileBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: UserProfileViewModel
+    private lateinit var postAdapter: PostAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentUserProfileBinding.inflate(inflater, container, false)
@@ -28,19 +32,46 @@ class UserProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         viewModel = ViewModelProvider(this)[UserProfileViewModel::class.java]
-
         FirebaseAuth.getInstance().currentUser?.let { firebaseUser ->
             viewModel.loadUser(firebaseUser.uid)
-            viewModel.loadUserSessions(firebaseUser.uid) // טוען את הסשנים של המשתמש
+            viewModel.loadUserSessions(firebaseUser.uid)
+        }
+
+        parentFragmentManager.setFragmentResultListener("postUpdated", viewLifecycleOwner) { _, _ ->
+            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setFragmentResultListener
+            viewModel.loadUserSessions(userId)
         }
 
         setupObservers()
+        setupRecyclerView()
         setupEditProfileButton()
+    }
 
-        // הגדרת ה-RecyclerView להצגת הסשנים
-        binding.sessionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+    private fun setupRecyclerView() {
+        postAdapter = PostAdapter(
+            isProfileView = true,
+            onPostRemoved = { postId ->
+                viewModel.removeSession(postId)
+                parentFragmentManager.setFragmentResult("shouldRefreshHome", Bundle())
+            },
+            onUpdate = { post ->
+                val bundle = Bundle().apply {
+                    putString("postId", post.id)
+                }
+                findNavController().navigate(R.id.action_profileFragment_to_updatePostFragment, bundle)
+            },
+            onParticipantsClick = { post ->
+                val bundle = Bundle().apply {
+                    putString("postId", post.id)
+                }
+                findNavController().navigate(R.id.action_profileFragment_to_participantsFragment, bundle)
+            }
+        )
+        binding.sessionsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = postAdapter
+        }
     }
 
     private fun setupEditProfileButton() {
@@ -62,24 +93,24 @@ class UserProfileFragment : Fragment() {
                     .placeholder(R.drawable.ic_profile_placeholder)
                     .into(binding.profileImage)
 
-                // לאחר טעינת המשתמש, נטען גם את הסשנים
                 viewModel.loadUserSessions(it.id)
             }
         }
 
         viewModel.userSessions.observe(viewLifecycleOwner) { sessions ->
-            if (sessions.isNotEmpty()) {
-                val adapter = SessionsAdapter(sessions) { post ->
-                    Toast.makeText(requireContext(), "Joined session: ${post.description}", Toast.LENGTH_SHORT).show()
+            val sortedSessions = sessions.sortedByDescending {
+                try {
+                    LocalDate.parse(it.sessionDate.trim(), DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                } catch (e: Exception) {
+                    LocalDate.MIN
                 }
-                binding.sessionsRecyclerView.adapter = adapter
-                binding.sessionsRecyclerView.visibility = View.VISIBLE
-                binding.noSessionsTextView.visibility = View.GONE
-            } else {
-                binding.sessionsRecyclerView.visibility = View.GONE
-                binding.noSessionsTextView.visibility = View.VISIBLE
             }
+
+            postAdapter.submitList(sortedSessions)
+            binding.sessionsRecyclerView.visibility = if (sortedSessions.isNotEmpty()) View.VISIBLE else View.GONE
+            binding.noSessionsTextView.visibility = if (sortedSessions.isEmpty()) View.VISIBLE else View.GONE
         }
+
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
             binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
@@ -90,6 +121,12 @@ class UserProfileFragment : Fragment() {
                 Toast.makeText(context, it, Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        viewModel.loadUserSessions(userId)
     }
 
     override fun onDestroyView() {

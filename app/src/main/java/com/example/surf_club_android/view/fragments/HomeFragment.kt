@@ -1,59 +1,82 @@
 package com.example.surf_club_android.view.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.surf_club_android.R
+import com.example.surf_club_android.view.fragments.adapters.PostAdapter
 import com.example.surf_club_android.databinding.FragmentHomeBinding
-import com.example.surf_club_android.model.Model
-import com.example.surf_club_android.adapter.PostAdapter
+import com.example.surf_club_android.viewmodel.HomeViewModel
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
+    private lateinit var viewModel: HomeViewModel
     private lateinit var postAdapter: PostAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        parentFragmentManager.setFragmentResultListener("shouldRefreshHome", viewLifecycleOwner) { _, _ ->
+            viewModel.loadPosts()
+        }
+        parentFragmentManager.setFragmentResultListener("postUpdated", viewLifecycleOwner) { _, _ ->
+            viewModel.loadPosts()
+        }
         setupRecyclerView()
-        loadPosts()
+        setupObservers()
     }
 
     private fun setupRecyclerView() {
-        postAdapter = PostAdapter()
+        postAdapter = PostAdapter(
+            isProfileView = false,
+            onPostRemoved = { deletedPostId ->
+                val updatedPosts = viewModel.posts.value?.filter { it.id != deletedPostId } ?: emptyList()
+                postAdapter.submitList(updatedPosts)
+            },
+            onUpdate = { post ->
+                val bundle = Bundle().apply {
+                    putString("postId", post.id)
+                }
+                findNavController().navigate(R.id.action_homeFragment_to_updatePostFragment, bundle)
+            },
+            onParticipantsClick = { post ->
+                val bundle = Bundle().apply {
+                    putString("postId", post.id)
+                }
+                findNavController().navigate(R.id.action_homeFragment_to_participantsFragment, bundle)
+            }
+        )
         binding.recyclerViewPosts.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
         }
     }
 
-    private fun loadPosts() {
-        binding.progressBar.visibility = View.VISIBLE
-        Model.shared.getAllPosts { posts ->
-            binding.progressBar.visibility = View.GONE
-            if (posts.isNotEmpty()) {
-                posts.forEach { post ->
-                    Log.d("HomeFragment", "Post: ${post.id}, Author: ${post.authorName}")
-                }
-                postAdapter.submitList(posts)
-            } else {
-                Toast.makeText(requireContext(), "No posts available", Toast.LENGTH_SHORT).show()
+    private fun setupObservers() {
+        viewModel.posts.observe(viewLifecycleOwner) { posts ->
+            postAdapter.submitList(posts)
+        }
+
+        viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
+            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+        }
+
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            error?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
             }
         }
     }
