@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import com.example.surf_club_android.base.EmptyCallback
 import com.example.surf_club_android.base.PostsCallback
 import com.example.surf_club_android.base.UsersCallback
 import com.example.surf_club_android.model.dao.AppLocalDb
@@ -12,7 +11,6 @@ import com.example.surf_club_android.model.dao.AppLocalDbRepository
 import com.google.firebase.auth.FirebaseUser
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
@@ -264,7 +262,7 @@ class Model private constructor() {
                         mainHandler.post { callback(false) }
                     }
                 }
-            }, onError = { error ->
+            }, onError = {
                 mainHandler.post { callback(false) }
             })
         } else {
