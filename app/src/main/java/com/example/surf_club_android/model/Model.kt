@@ -128,6 +128,7 @@ class Model private constructor() {
         }
     }
 
+
     fun getPostById(postId: String, callback: (Post?) -> Unit) {
         firebaseModel.getPostById(postId, callback)
     }
@@ -138,15 +139,16 @@ class Model private constructor() {
 
     fun signUp(email: String, password: String, firstName: String, lastName: String, role: String, bitmap: Bitmap?, callback: (FirebaseUser?, String?) -> Unit) {
         firebaseModel.signUp(email, password) { firebaseUser, error ->
+
             if (firebaseUser != null) {
                 if (bitmap != null) {
                     uploadImageToCloudinary(bitmap, firebaseUser.uid,
                         onSuccess = { imageUrl ->
-                            Log.d("TAG", "Image uploaded to Cloudinary: $imageUrl")
+                            Log.d("MODEL", "Image uploaded to Cloudinary: $imageUrl")
                             saveUserToFirebaseAndLocal(firebaseUser, firstName, lastName, email, role, imageUrl, callback)
                         },
                         onError = { errMsg ->
-                            Log.e("TAG", "Image upload to Cloudinary failed: $errMsg")
+                            Log.e("MODEL", "Image upload to Cloudinary failed: $errMsg")
                             saveUserToFirebaseAndLocal(firebaseUser, firstName, lastName, email, role, "", callback)
                         }
                     )
@@ -161,11 +163,25 @@ class Model private constructor() {
 
     private fun saveUserToFirebaseAndLocal(firebaseUser: FirebaseUser, firstName: String, lastName: String, email: String, role: String, imageUrl: String, callback: (FirebaseUser?, String?) -> Unit) {
         firebaseModel.saveUser(firebaseUser, firstName, lastName, email, role, imageUrl) { success, saveError ->
+            Log.d("DEBUG_PROFILE", "Saving user with profileImageUrl = $imageUrl")
+
             if (success) {
                 roomExecutor.execute {
                     database.userDao().insertUsers(
-                        User(firebaseUser.uid, firstName, lastName, email, "", role, imageUrl)
+                        User(
+                            id = firebaseUser.uid,
+                            firstName = firstName,
+                            lastName = lastName,
+                            email = email,
+                            password = "",
+                            role = role,
+                            profileImageUrl = imageUrl,
+                            aboutMe = "",
+                            sessionIds = emptyList()
+                        )
                     )
+
+                    Log.d("MODEL", "Saving user to local: $imageUrl")
                 }
                 mainHandler.post { callback(firebaseUser, null) }
             } else {
@@ -186,7 +202,7 @@ class Model private constructor() {
         FirebaseModel().updateUser(user, callback)
     }
 
-    private fun uploadImageToCloudinary(image: Bitmap, name: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
+    fun uploadImageToCloudinary(image: Bitmap, name: String, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
         cloudinaryModel.uploadBitmap(
             bitmap = image,
             onSuccess = onSuccess,

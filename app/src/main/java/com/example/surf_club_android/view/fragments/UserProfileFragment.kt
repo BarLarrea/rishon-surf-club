@@ -1,6 +1,7 @@
 package com.example.surf_club_android.view.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,14 +84,15 @@ class UserProfileFragment : Fragment() {
     private fun setupObservers() {
         viewModel.user.observe(viewLifecycleOwner) { user ->
             user?.let {
+                Log.d("DEBUG_PROFILE", "profileImageUrl = ${user.profileImageUrl}")
                 binding.nameTextView.text = getString(R.string.full_name_format, it.firstName, it.lastName)
                 binding.emailValueTextView.text = it.email
                 binding.teamValueTextView.text = it.role
                 binding.aboutMeValueTextView.text = it.aboutMe ?: getString(R.string.no_info_provided)
 
                 Glide.with(this)
-                    .load(it.profileImageUrl)
-                    .placeholder(R.drawable.ic_profile_placeholder)
+                    .load(it.profileImageUrl.also { url -> Log.d("PROFILE_IMAGE", "URL = $url") })
+                    .placeholder(R.drawable.ic_person)
                     .into(binding.profileImage)
 
                 viewModel.loadUserSessions(it.id)

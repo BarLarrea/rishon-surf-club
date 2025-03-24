@@ -75,7 +75,7 @@ class CloudinaryModel {
             .dispatch()
     }
 
-    fun bitmapToFile(bitmap: Bitmap, context: Context): File {
+    private fun bitmapToFile(bitmap: Bitmap, context: Context): File {
         val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
         FileOutputStream(file).use { outputStream ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
