@@ -2,6 +2,7 @@
 package com.example.surf_club_android.view.fragments.adapters
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -132,6 +133,9 @@ class PostAdapter(
 
                                 if (isProfileView && !isJoining) {
                                     onPostRemoved?.invoke(post.id)
+
+                                    val fragmentManager = (itemView.context as? androidx.fragment.app.FragmentActivity)?.supportFragmentManager
+                                    fragmentManager?.setFragmentResult("shouldRefreshHome", Bundle())
                                 }
 
                                 val context = itemView.context

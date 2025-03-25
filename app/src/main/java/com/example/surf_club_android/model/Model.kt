@@ -26,8 +26,6 @@ class Model private constructor() {
         val shared = Model()
     }
 
-
-
     fun getUpcomingPosts(callback: (List<Post>) -> Unit) {
         firebaseModel.getAllPosts { posts ->
             val dateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
