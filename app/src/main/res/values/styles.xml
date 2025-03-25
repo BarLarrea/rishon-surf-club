@@ -10,4 +10,9 @@
         <item name="cornerSize">50%</item>
     </style>
 
+
+    <style name="Theme.SurfClubAndroid.NoPreview" parent="Theme.SurfClubAndroid">
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+
 </resources>
