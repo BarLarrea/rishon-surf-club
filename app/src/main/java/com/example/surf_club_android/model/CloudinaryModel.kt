@@ -6,8 +6,6 @@ import android.util.Log
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
-import com.cloudinary.android.policy.GlobalUploadPolicy
-import com.cloudinary.android.policy.UploadPolicy
 import com.example.surf_club_android.BuildConfig
 import com.example.surf_club_android.base.MyApplication
 import java.io.File
@@ -16,37 +14,31 @@ import java.io.FileOutputStream
 class CloudinaryModel {
 
     companion object {
-        private var isInitialized = false
+        private var isCloudinaryInitialized = false
     }
 
-    init {
-        if (!isInitialized) {
-            val config = mapOf(
-                "cloud_name" to BuildConfig.CLOUDINARY_CLOUD_NAME,
-                "api_key" to BuildConfig.CLOUDINARY_API_KEY,
-                "api_secret" to BuildConfig.CLOUDINARY_API_SECRET
-            )
-            Log.d("CloudinaryModel", "Initializing Cloudinary: cloud_name=${BuildConfig.CLOUDINARY_CLOUD_NAME}")
-
-            MyApplication.Globals.context?.let { context ->
-                MediaManager.init(context, config)
-                MediaManager.get().globalUploadPolicy = GlobalUploadPolicy.Builder()
-                    .maxConcurrentRequests(3)
-                    .networkPolicy(UploadPolicy.NetworkType.UNMETERED)
-                    .build()
-                isInitialized = true
-            } ?: Log.e("CloudinaryModel", "Application context is null!")
-        } else {
-            Log.d("CloudinaryModel", "MediaManager is already initialized, skipping.")
-        }
-    }
-
-    fun uploadBitmap(bitmap: Bitmap, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
+    fun uploadBitmap(
+        bitmap: Bitmap,
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
         val context = MyApplication.Globals.context
         if (context == null) {
             onError("Application context is null")
             return
         }
+
+        if (!isCloudinaryInitialized) {
+            val config = mapOf(
+                "cloud_name" to BuildConfig.CLOUDINARY_CLOUD_NAME,
+                "api_key" to BuildConfig.CLOUDINARY_API_KEY,
+                "api_secret" to BuildConfig.CLOUDINARY_API_SECRET
+            )
+            Log.d("CloudinaryModel", "Initializing Cloudinary from inside uploadBitmap()")
+            MediaManager.init(context, config)
+            isCloudinaryInitialized = true
+        }
+
         val file = bitmapToFile(bitmap, context)
         Log.d("CloudinaryModel", "Uploading file from path: ${file.absolutePath} with size: ${file.length()} bytes")
 
@@ -83,7 +75,7 @@ class CloudinaryModel {
             .dispatch()
     }
 
-    fun bitmapToFile(bitmap: Bitmap, context: Context): File {
+    private fun bitmapToFile(bitmap: Bitmap, context: Context): File {
         val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
         FileOutputStream(file).use { outputStream ->
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)

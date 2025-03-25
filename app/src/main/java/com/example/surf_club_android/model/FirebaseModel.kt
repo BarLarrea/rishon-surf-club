@@ -193,7 +193,7 @@ class FirebaseModel {
         // Define the user data you want to store.
         val userData = hashMapOf(
             "id" to user.uid,
-            "image" to image,
+            "profileImageUrl" to image,
             "role" to role,
             "firstName" to firstName,
             "lastName" to lastName,

@@ -35,19 +35,20 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomNavigation() {
         binding.bottomNavigation.apply {
             findViewById<ImageView>(R.id.homeButton)?.setOnClickListener {
-                navController.navigate(R.id.homeFragment)
+                navController.navigate(NavGraphDirections.actionGlobalHomeFragment())
             }
             findViewById<ImageView>(R.id.chatButton)?.setOnClickListener {
-                navController.navigate(R.id.chatFragment)
+                navController.navigate(NavGraphDirections.actionGlobalChatFragment())
             }
             findViewById<ImageView>(R.id.profileButton)?.setOnClickListener {
-                navController.navigate(R.id.profileFragment)
+                navController.navigate(NavGraphDirections.actionGlobalProfileFragment())
             }
             findViewById<ImageView>(R.id.createPostButton)?.setOnClickListener {
-                navController.navigate(R.id.createPostFragment)
+                navController.navigate(NavGraphDirections.actionGlobalCreatePostFragment())
             }
         }
     }
+
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()

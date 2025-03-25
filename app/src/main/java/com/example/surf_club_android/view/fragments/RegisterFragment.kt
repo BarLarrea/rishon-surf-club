@@ -19,8 +19,7 @@ import com.example.surf_club_android.model.Model
 class RegisterFragment : Fragment() {
 
     private var _binding: FragmentRegisterBinding? = null
-    private val binding get() = _binding!!
-
+    private val binding get() = _binding ?: throw IllegalStateException("View binding is null")
     private var selectedImageUri: Uri? = null
 
     private val getContent =
@@ -46,8 +45,10 @@ class RegisterFragment : Fragment() {
     }
 
     private fun setupRoleDropdown() {
-        val roles = arrayOf("מדריך", "מתנדב", "בית הלוחם ת''א", "בית הלוחם ירושלים", "אקי''ם", "הצעד הבא")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, roles)
+        val roles =
+            arrayOf("מדריך", "מתנדב", "בית הלוחם ת''א", "בית הלוחם ירושלים", "אקי''ם", "הצעד הבא")
+        val adapter =
+            ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, roles)
         binding.actvRole.setAdapter(adapter)
     }
 
@@ -65,6 +66,17 @@ class RegisterFragment : Fragment() {
         }
     }
 
+    private fun uploadImageToCloudinary(bitmap: Bitmap, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
+        Model.shared.uploadImageToCloudinary(
+            image = bitmap,
+            name = System.currentTimeMillis().toString(),
+            onSuccess = onSuccess,
+            onError = onError
+        )
+    }
+
+
+
     private fun registerUser() {
         val firstName = binding.etFirstName.text.toString()
         val lastName = binding.etLastName.text.toString()
@@ -75,27 +87,39 @@ class RegisterFragment : Fragment() {
         if (firstName.isNotBlank() && lastName.isNotBlank() && role.isNotBlank() &&
             email.isNotBlank() && password.isNotBlank()) {
 
-            // Show progress bar and disable button
             binding.progressBar.visibility = View.VISIBLE
             binding.btnRegister.isEnabled = false
 
-            // Convert selected image URI to Bitmap if available.
-            val bitmap: Bitmap? = selectedImageUri?.let { getBitmapFromUri(it) }
+            val bitmap = selectedImageUri?.let { getBitmapFromUri(it) }
 
-            Model.shared.signUp(email, password, firstName, lastName, role, bitmap) { firebaseUser, error ->
-                activity?.runOnUiThread {
-                    // Hide progress bar and re-enable button
-                    binding.progressBar.visibility = View.GONE
-                    binding.btnRegister.isEnabled = true
+            fun continueSignUp(imageBitmap: Bitmap?) {
+                Model.shared.signUp(email, password, firstName, lastName, role, imageBitmap) { firebaseUser, error ->
+                    activity?.runOnUiThread {
+                        binding.progressBar.visibility = View.GONE
+                        binding.btnRegister.isEnabled = true
 
-                    if (firebaseUser != null) {
-                        // Registration successful, navigate to Login
-                        findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
-                    } else {
-                        Toast.makeText(requireContext(), error ?: "Sign up failed", Toast.LENGTH_LONG).show()
+                        if (firebaseUser != null) {
+                            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                        } else {
+                            Toast.makeText(requireContext(), error ?: "Sign up failed", Toast.LENGTH_LONG).show()
+                        }
                     }
                 }
             }
+            if (bitmap != null) {
+                uploadImageToCloudinary(bitmap,
+                    onSuccess = {
+                        continueSignUp(bitmap)
+                    },
+                    onError = { error ->
+                        Toast.makeText(requireContext(), "Image upload failed: $error", Toast.LENGTH_SHORT).show()
+                        continueSignUp(null)
+                    }
+                )
+            } else {
+                continueSignUp(null)
+            }
+
         } else {
             Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
         }

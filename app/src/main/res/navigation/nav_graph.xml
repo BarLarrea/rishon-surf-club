@@ -8,13 +8,14 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.surf_club_android.view.fragments.HomeFragment"
-        android:label="Home">
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
         <action
             android:id="@+id/action_homeFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            app:destination="@id/userProfileFragment" />
         <action
             android:id="@+id/action_homeFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
@@ -30,7 +31,8 @@
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.example.surf_club_android.view.fragments.ChatFragment"
-        android:label="Chat With Kelly">
+        android:label="Chat With Kelly"
+        tools:layout="@layout/fragment_chat_with_kelly">
         <action
             android:id="@+id/action_chatFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
@@ -39,11 +41,11 @@
             app:destination="@id/homeFragment" />
         <action
             android:id="@+id/action_chatFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            app:destination="@id/userProfileFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/profileFragment"
+        android:id="@+id/userProfileFragment"
         android:name="com.example.surf_club_android.view.fragments.UserProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_user_profile">
@@ -64,36 +66,67 @@
         android:label="Edit Profile"
         tools:layout="@layout/fragment_edit_user_profile" />
 
-    <fragment
-        android:id="@+id/createPostFragment"
-        android:name="com.example.surf_club_android.view.fragments.CreatePostFragment"
-        android:label="Create Post">
-        <action
-            android:id="@+id/action_createPostFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-        <action
-            android:id="@+id/action_createPostFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
-        <action
-            android:id="@+id/action_createPostFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
-    </fragment>
+<fragment
+    android:id="@+id/createPostFragment"
+    android:name="com.example.surf_club_android.view.fragments.CreatePostFragment"
+    android:label="Create Post"
+    tools:layout="@layout/fragment_create_post">
+    <action
+        android:id="@+id/action_createPostFragment_to_homeFragment"
+        app:destination="@id/homeFragment" />
+    <action
+        android:id="@+id/action_createPostFragment_to_chatFragment"
+        app:destination="@id/chatFragment" />
+    <action
+        android:id="@+id/action_createPostFragment_to_profileFragment"
+        app:destination="@id/userProfileFragment" />
+    <action
+        android:id="@+id/action_createPostFragment_to_updatePostFragment"
+        app:destination="@id/updatePostFragment" />
+</fragment>
 
     <!-- New update post destination -->
     <fragment
         android:id="@+id/updatePostFragment"
         android:name="com.example.surf_club_android.view.fragments.UpdatePostFragment"
         android:label="Update Post"
-        tools:layout="@layout/fragment_update_post" />
+        tools:layout="@layout/fragment_update_post">
+
+        <argument
+            android:name="postId"
+            app:argType="string"
+            app:nullable="false" />
+    </fragment>
 
     <fragment
         android:id="@+id/participantsFragment"
         android:name="com.example.surf_club_android.view.fragments.ParticipantsFragment"
-        android:label="Participants">
+        android:label="Participants"
+        tools:layout="@layout/fragment_participant_list">
         <argument
             android:name="postId"
             app:argType="string" />
     </fragment>
+
+    <action
+        android:id="@+id/action_global_homeFragment"
+        app:destination="@id/homeFragment"
+        app:launchSingleTop="true" />
+
+    <action
+        android:id="@+id/action_global_chatFragment"
+        app:destination="@id/chatFragment"
+        app:launchSingleTop="true" />
+
+    <action
+        android:id="@+id/action_global_profileFragment"
+        app:destination="@id/userProfileFragment"
+        app:launchSingleTop="true" />
+
+    <action
+        android:id="@+id/action_global_createPostFragment"
+        app:destination="@id/createPostFragment"
+        app:launchSingleTop="true" />
 
 
 </navigation>

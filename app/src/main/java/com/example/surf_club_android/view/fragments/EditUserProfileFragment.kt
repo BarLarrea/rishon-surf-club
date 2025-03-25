@@ -129,40 +129,27 @@ class EditUserProfileFragment : Fragment() {
     }
 
     private fun uploadImageToCloudinary(bitmap: Bitmap, updatedUser: User) {
+        binding.progressBar.visibility = View.VISIBLE
         val cloudinaryModel = CloudinaryModel()
-        val file = cloudinaryModel.bitmapToFile(bitmap, requireContext())
 
-        MediaManager.get().upload(file.path)
-            .option("public_id", "user_profile_${updatedUser.id}")
-            .callback(object : UploadCallback {
-                override fun onStart(requestId: String) {
-                    binding.progressBar.visibility = View.VISIBLE
-                }
-
-                override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
-                    val progress = (bytes.toDouble() / totalBytes.toDouble() * 100).toInt()
-                    binding.progressBar.progress = progress
-                }
-
-                override fun onSuccess(requestId: String, resultData: Map<*, *>) {
-                    binding.progressBar.visibility = View.GONE
-                    val imageUrl = resultData["secure_url"] as? String ?: ""
-                    if (imageUrl.isNotEmpty()) {
-                        val userWithNewImage = updatedUser.copy(profileImageUrl = imageUrl)
-                        viewModel.updateUserProfile(userWithNewImage, bitmap)
-                    }
-                }
-
-                override fun onError(requestId: String, error: ErrorInfo) {
-                    binding.progressBar.visibility = View.GONE
-                    Toast.makeText(context, "Upload failed: ${error.description}", Toast.LENGTH_LONG).show()
+        cloudinaryModel.uploadBitmap(
+            bitmap = bitmap,
+            onSuccess = { imageUrl ->
+                binding.progressBar.visibility = View.GONE
+                if (imageUrl.isNotEmpty()) {
+                    val userWithNewImage = updatedUser.copy(profileImageUrl = imageUrl)
+                    viewModel.updateUserProfile(userWithNewImage, bitmap)
+                } else {
+                    Toast.makeText(requireContext(), "Upload failed: empty URL", Toast.LENGTH_LONG).show()
                     viewModel.updateUserProfile(updatedUser, null)
                 }
-                override fun onReschedule(requestId: String, error: ErrorInfo) {
-                    Log.e("Cloudinary Upload", "Upload rescheduled: ${error.description}")
-                }
-            })
-            .dispatch()
+            },
+            onError = { error ->
+                binding.progressBar.visibility = View.GONE
+                Toast.makeText(requireContext(), "Upload failed: $error", Toast.LENGTH_LONG).show()
+                viewModel.updateUserProfile(updatedUser, null)
+            }
+        )
     }
 
     override fun onDestroyView() {
