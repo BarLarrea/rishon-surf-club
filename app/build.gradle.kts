@@ -4,8 +4,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.androidx.navigation.safeargs)
-    id("kotlin-kapt")
     alias(libs.plugins.google.services)
+    id("kotlin-kapt")
 }
 
 val localProperties = Properties().apply {
@@ -136,7 +136,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 
-//Chat
+    //Chat
 
     implementation(libs.generativeai) // Google AI Gemini SDK
     implementation(libs.retrofit) // Retrofit for HTTP requests

@@ -19,7 +19,7 @@ import com.example.surf_club_android.viewmodel.ChatViewModelFactory
 class ChatFragment : Fragment() {
 
     private var _binding: FragmentChatWithKellyBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding ?: throw IllegalStateException("View binding is not initialized")
     private lateinit var chatAdapter: ChatAdapter
     private val messagesList = mutableListOf<Pair<String, Boolean>>()
 

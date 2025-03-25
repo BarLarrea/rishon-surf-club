@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter
 class UserProfileFragment : Fragment() {
 
     private var _binding: FragmentUserProfileBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding?: throw IllegalStateException("View binding is null")
     private lateinit var viewModel: UserProfileViewModel
     private lateinit var postAdapter: PostAdapter
 
@@ -57,16 +57,12 @@ class UserProfileFragment : Fragment() {
                 parentFragmentManager.setFragmentResult("shouldRefreshHome", Bundle())
             },
             onUpdate = { post ->
-                val bundle = Bundle().apply {
-                    putString("postId", post.id)
-                }
-                findNavController().navigate(R.id.action_profileFragment_to_updatePostFragment, bundle)
+                val action = UserProfileFragmentDirections.actionProfileFragmentToUpdatePostFragment(post.id)
+                findNavController().navigate(action)
             },
             onParticipantsClick = { post ->
-                val bundle = Bundle().apply {
-                    putString("postId", post.id)
-                }
-                findNavController().navigate(R.id.action_profileFragment_to_participantsFragment, bundle)
+                val action = UserProfileFragmentDirections.actionProfileFragmentToParticipantsFragment(post.id)
+                findNavController().navigate(action)
             }
         )
         binding.sessionsRecyclerView.apply {

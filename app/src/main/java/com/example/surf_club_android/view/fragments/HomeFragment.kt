@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.surf_club_android.R
 import com.example.surf_club_android.view.fragments.adapters.PostAdapter
 import com.example.surf_club_android.databinding.FragmentHomeBinding
 import com.example.surf_club_android.viewmodel.HomeViewModel
@@ -17,7 +16,7 @@ import com.example.surf_club_android.viewmodel.HomeViewModel
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding?: throw IllegalStateException("View binding is null")
     private lateinit var viewModel: HomeViewModel
     private lateinit var postAdapter: PostAdapter
 
@@ -47,16 +46,12 @@ class HomeFragment : Fragment() {
                 postAdapter.submitList(updatedPosts)
             },
             onUpdate = { post ->
-                val bundle = Bundle().apply {
-                    putString("postId", post.id)
-                }
-                findNavController().navigate(R.id.action_homeFragment_to_updatePostFragment, bundle)
+                val action = HomeFragmentDirections.actionHomeFragmentToUpdatePostFragment(post.id)
+                findNavController().navigate(action)
             },
             onParticipantsClick = { post ->
-                val bundle = Bundle().apply {
-                    putString("postId", post.id)
-                }
-                findNavController().navigate(R.id.action_homeFragment_to_participantsFragment, bundle)
+                val action = HomeFragmentDirections.actionHomeFragmentToParticipantsFragment(post.id)
+                findNavController().navigate(action)
             }
         )
         binding.recyclerViewPosts.apply {
