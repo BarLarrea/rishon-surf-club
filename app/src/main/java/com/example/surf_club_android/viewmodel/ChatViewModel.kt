@@ -23,6 +23,8 @@ class ChatViewModel(private val geminiService: GeminiService) : ViewModel() {
          If a query is unrelated to your expertise, politely redirect the conversation to topics like surfing, mental health,
          or a healthy lifestyle. Always maintain an encouraging and motivational tone.
          The user is not Kelly, only the assistant is named Kelly which is you, remember it for the whole session.
+         Use the conversation history provided to maintain context throughout the conversation.
+         Conversation History:
          """.trimIndent()
 
     // Send only the system prompt at the start of the conversation
@@ -41,11 +43,22 @@ class ChatViewModel(private val geminiService: GeminiService) : ViewModel() {
     fun sendMessage(userMessage: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val result = geminiService.sendMessage(userMessage)
+                messageHistory.add("User: $userMessage") // Add user message to history
+                val conversation = buildConversation()
+                val result = geminiService.sendMessage(conversation)
+                messageHistory.add("Kelly: $result") // Add Kelly's response to history
                 _response.postValue(result)
             } catch (e: Exception) {
                 _response.postValue("Error: ${e.message}")
             }
         }
+    }
+
+    private fun buildConversation(): String {
+        val conversationBuilder = StringBuilder(systemPrompt)
+        messageHistory.forEach {
+            conversationBuilder.append("\n$it")
+        }
+        return conversationBuilder.toString()
     }
 }

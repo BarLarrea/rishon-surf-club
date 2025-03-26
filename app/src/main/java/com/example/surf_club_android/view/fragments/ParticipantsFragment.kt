@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.surf_club_android.R
-import com.example.surf_club_android.view.fragments.adapters.CategoryAdapter
+import com.example.surf_club_android.view.adapters.CategoryAdapter
 import com.example.surf_club_android.databinding.FragmentParticipantsBinding
 import com.example.surf_club_android.viewmodel.ParticipantsViewModel
 

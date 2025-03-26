@@ -1,4 +1,4 @@
-package com.example.surf_club_android.view.fragments.adapters
+package com.example.surf_club_android.view.adapters
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

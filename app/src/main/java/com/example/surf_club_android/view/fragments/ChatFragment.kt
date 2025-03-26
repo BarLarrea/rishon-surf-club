@@ -1,6 +1,6 @@
 package com.example.surf_club_android.view.fragments
 
-import com.example.surf_club_android.view.fragments.adapters.ChatAdapter
+import com.example.surf_club_android.view.adapters.ChatAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

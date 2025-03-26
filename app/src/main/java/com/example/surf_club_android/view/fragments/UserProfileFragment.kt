@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
-import com.example.surf_club_android.view.fragments.adapters.PostAdapter
+import com.example.surf_club_android.view.adapters.PostAdapter
 import com.example.surf_club_android.databinding.FragmentUserProfileBinding
 import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
