@@ -16,7 +16,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentCreatePostBinding
-import com.example.surf_club_android.model.Model
+import com.example.surf_club_android.model.repositories.UserRepository
+import com.example.surf_club_android.model.repositories.PostRepository
 import com.example.surf_club_android.model.schemas.Post
 import com.example.surf_club_android.viewmodel.AuthViewModel
 import java.text.SimpleDateFormat
@@ -104,7 +105,7 @@ CreatePostFragment : Fragment() {
         }
 
         // Check the user's role before creating the post.
-        Model.shared.getUser(currentUserId) { user ->
+        UserRepository.shared.getUser(currentUserId) { user ->
             if (user == null || user.role != "מדריך") {
                 activity?.runOnUiThread {
                     showLoading(false)
@@ -128,7 +129,7 @@ CreatePostFragment : Fragment() {
 
             val bitmap: Bitmap? = selectedImageUri?.let { getBitmapFromUri(it) }
 
-            Model.shared.addPost(post, bitmap) { success, _ ->
+            PostRepository.shared.addPost(post, bitmap) { success, _ ->
                 activity?.runOnUiThread {
                     showLoading(false)
                     if (success) {

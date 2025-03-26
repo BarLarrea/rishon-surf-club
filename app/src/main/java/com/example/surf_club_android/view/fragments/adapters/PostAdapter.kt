@@ -15,7 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.ItemPostBinding
-import com.example.surf_club_android.model.Model
+import com.example.surf_club_android.model.repositories.PostRepository
+import com.example.surf_club_android.model.repositories.UserRepository
 import com.example.surf_club_android.model.schemas.Post
 import com.example.surf_club_android.viewmodel.HomeViewModel
 import com.example.surf_club_android.viewmodel.UserProfileViewModel
@@ -56,9 +57,9 @@ class PostAdapter(
             onParticipantsClick: ((Post) -> Unit)?
         ) {
             binding.apply {
-                Model.shared.getUser(post.author) { user ->
+                UserRepository.shared.getUser(post.author) { user ->
                     if (user == null) {
-                        Log.e("PostAdapter", "❌ getUser returned null for authorId: ${post.author}")
+                        Log.e("PostAdapter", "getUser returned null for authorId: ${post.author}")
                         tvHostName.text = "Unknown Author"
 
                         Glide.with(ivHostProfile.context)
@@ -89,7 +90,7 @@ class PostAdapter(
                         }
 
                         btnDelete.setOnClickListener {
-                            Model.shared.deletePost(post.id) { success ->
+                            PostRepository.shared.deletePost(post.id) { success ->
                                 if (success) {
                                     onPostRemoved?.invoke(post.id)
                                 }
@@ -123,7 +124,7 @@ class PostAdapter(
                     btnJoin.isEnabled = true
 
                     btnJoin.setOnClickListener {
-                        Model.shared.toggleSessionParticipation(currentUserId, post.id) { success, isJoining ->
+                        PostRepository.shared.toggleSessionParticipation(currentUserId, post.id) { success, isJoining ->
                             if (success) {
                                 btnJoin.text = if (isJoining) "Leave" else "Join"
                                 btnJoin.setTextColor(

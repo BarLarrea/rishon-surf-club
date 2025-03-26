@@ -37,7 +37,7 @@ class ParticipantsViewModel : ViewModel() {
                         val participantsList = result.toObjects(User::class.java)
                         _participants.postValue(participantsList)
 
-                        // חלוקת המשתתפים לפי שיוך (role)
+                        // Group participants by role
                         val categorizedMap = participantsList.groupBy { it.role }
                         _categoryParticipants.postValue(categorizedMap)
 

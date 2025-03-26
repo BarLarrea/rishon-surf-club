@@ -1,5 +1,6 @@
 package com.example.surf_club_android.view.fragments.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -25,6 +26,7 @@ class CategoryAdapter : ListAdapter<Map.Entry<String, List<User>>, CategoryAdapt
     }
 
     class CategoryViewHolder(private val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("SetTextI18n")
         fun bind(category: String, participants: List<User>) {
             binding.categoryTitle.text = "$category (${participants.size})"
 

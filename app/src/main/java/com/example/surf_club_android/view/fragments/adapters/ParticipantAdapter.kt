@@ -1,5 +1,6 @@
 package com.example.surf_club_android.view.fragments.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,7 @@ class ParticipantAdapter : ListAdapter<User, ParticipantAdapter.ParticipantViewH
         private val nameText: TextView = itemView.findViewById(R.id.participantNameTextView)
         private val profileImage: ImageView = itemView.findViewById(R.id.participantImageView)
 
+        @SuppressLint("SetTextI18n")
         fun bind(user: User) {
             nameText.text = user.firstName + " " + user.lastName
 

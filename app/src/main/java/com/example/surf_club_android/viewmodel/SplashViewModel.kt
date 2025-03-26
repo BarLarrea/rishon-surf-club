@@ -2,7 +2,7 @@ package com.example.surf_club_android.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.surf_club_android.model.Model
+import com.example.surf_club_android.model.repositories.PostRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +28,7 @@ class SplashViewModel : ViewModel() {
             val user = FirebaseAuth.getInstance().currentUser
             _isUserSignedIn.value = user != null
 
-            Model.shared.getUpcomingPosts { posts ->
+            PostRepository.shared.getUpcomingPosts { posts ->
                 if (posts.isEmpty()) {
                     _hasError.value = true
                 }
