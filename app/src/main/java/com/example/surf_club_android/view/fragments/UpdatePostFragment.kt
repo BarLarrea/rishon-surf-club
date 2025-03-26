@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentUpdatePostBinding
 import com.example.surf_club_android.model.Model
-import com.example.surf_club_android.model.Post
+import com.example.surf_club_android.model.schemas.Post
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -52,7 +52,7 @@ class UpdatePostFragment : Fragment() {
         val postId = args.postId
         this.postId = postId
 
-        Model.shared.getPostById(postId) { fetchedPost:Post? ->
+        Model.shared.getPostById(postId) { fetchedPost: Post? ->
             if (fetchedPost == null) {
                 Log.e("UpdatePostFragment", "Post with ID $postId not found.")
                 Toast.makeText(requireContext(), "Post not found", Toast.LENGTH_SHORT).show()

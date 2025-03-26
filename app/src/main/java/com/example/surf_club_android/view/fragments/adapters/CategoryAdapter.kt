@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.surf_club_android.databinding.ItemCategoryBinding
-import com.example.surf_club_android.model.User
+import com.example.surf_club_android.model.schemas.User
 
 class CategoryAdapter : ListAdapter<Map.Entry<String, List<User>>, CategoryAdapter.CategoryViewHolder>(
     DiffCallback()

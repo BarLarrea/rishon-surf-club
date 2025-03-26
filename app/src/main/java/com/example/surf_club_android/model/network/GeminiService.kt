@@ -1,4 +1,4 @@
-package com.example.surf_club_android.network
+package com.example.surf_club_android.model.network
 
 import android.util.Log
 import com.example.surf_club_android.BuildConfig

@@ -3,8 +3,8 @@ package com.example.surf_club_android.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.surf_club_android.model.Post
-import com.example.surf_club_android.model.User
+import com.example.surf_club_android.model.schemas.Post
+import com.example.surf_club_android.model.schemas.User
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ParticipantsViewModel : ViewModel() {

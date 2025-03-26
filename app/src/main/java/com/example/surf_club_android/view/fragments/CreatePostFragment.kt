@@ -17,7 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentCreatePostBinding
 import com.example.surf_club_android.model.Model
-import com.example.surf_club_android.model.Post
+import com.example.surf_club_android.model.schemas.Post
 import com.example.surf_club_android.viewmodel.AuthViewModel
 import java.text.SimpleDateFormat
 import java.util.*

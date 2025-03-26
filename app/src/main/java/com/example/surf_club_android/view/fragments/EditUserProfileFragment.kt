@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,13 +14,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.cloudinary.android.MediaManager
-import com.cloudinary.android.callback.ErrorInfo
-import com.cloudinary.android.callback.UploadCallback
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentEditUserProfileBinding
-import com.example.surf_club_android.model.CloudinaryModel
-import com.example.surf_club_android.model.User
+import com.example.surf_club_android.model.network.CloudinaryModel
+import com.example.surf_club_android.model.schemas.User
 import com.example.surf_club_android.viewmodel.EditUserProfileViewModel
 
 

@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.ItemPostBinding
 import com.example.surf_club_android.model.Model
-import com.example.surf_club_android.model.Post
+import com.example.surf_club_android.model.schemas.Post
 import com.example.surf_club_android.viewmodel.HomeViewModel
 import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth

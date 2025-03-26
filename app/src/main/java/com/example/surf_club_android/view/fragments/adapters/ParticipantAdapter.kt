@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
-import com.example.surf_club_android.model.User
+import com.example.surf_club_android.model.schemas.User
 
 class ParticipantAdapter : ListAdapter<User, ParticipantAdapter.ParticipantViewHolder>(DiffCallback()) {
 

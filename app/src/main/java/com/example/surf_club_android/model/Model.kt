@@ -8,6 +8,10 @@ import com.example.surf_club_android.base.PostsCallback
 import com.example.surf_club_android.base.UsersCallback
 import com.example.surf_club_android.model.dao.AppLocalDb
 import com.example.surf_club_android.model.dao.AppLocalDbRepository
+import com.example.surf_club_android.model.network.CloudinaryModel
+import com.example.surf_club_android.model.network.FirebaseModel
+import com.example.surf_club_android.model.schemas.Post
+import com.example.surf_club_android.model.schemas.User
 import com.google.firebase.auth.FirebaseUser
 import java.text.SimpleDateFormat
 import java.util.Calendar

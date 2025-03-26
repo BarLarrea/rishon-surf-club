@@ -1,4 +1,4 @@
-package com.example.surf_club_android.model
+package com.example.surf_club_android.model.network
 
 import android.content.Context
 import android.graphics.Bitmap

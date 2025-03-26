@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.surf_club_android.model.Model
-import com.example.surf_club_android.model.Post
+import com.example.surf_club_android.model.schemas.Post
 
 class HomeViewModel : ViewModel() {
 
