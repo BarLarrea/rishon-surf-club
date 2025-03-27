@@ -132,6 +132,10 @@ class UserRepository {
         )
     }
 
+    fun getCurrentUser(): FirebaseUser? {
+        return firebaseModel.getCurrentUser()
+    }
+
 
 
 

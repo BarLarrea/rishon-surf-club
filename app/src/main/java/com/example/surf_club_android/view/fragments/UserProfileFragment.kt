@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
 import com.example.surf_club_android.view.adapters.PostAdapter
 import com.example.surf_club_android.databinding.FragmentUserProfileBinding
+import com.example.surf_club_android.model.repositories.UserRepository
 import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDate
@@ -40,7 +41,7 @@ class UserProfileFragment : Fragment() {
         }
 
         parentFragmentManager.setFragmentResultListener("postUpdated", viewLifecycleOwner) { _, _ ->
-            val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return@setFragmentResultListener
+            val userId = UserRepository.shared.getCurrentUser()?.uid ?: return@setFragmentResultListener
             viewModel.loadUserSessions(userId)
         }
 

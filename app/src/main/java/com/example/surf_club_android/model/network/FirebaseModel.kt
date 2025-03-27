@@ -40,7 +40,6 @@ class FirebaseModel {
         }
     }
 
-
     fun getAllPosts(callback: PostsCallback) {
         database.collection(Constants.COLLECTIONS.POSTS)
             .get()
@@ -93,7 +92,6 @@ class FirebaseModel {
                 }
         }
     }
-
 
     fun getLastFourPosts(callback: PostsCallback) {
         database.collection(Constants.COLLECTIONS.POSTS)
@@ -289,7 +287,6 @@ class FirebaseModel {
     }
 
 
-
     fun addSessionToUser(userId: String, sessionId: String, callback: (Boolean) -> Unit) {
         val userRef = database.collection(Constants.COLLECTIONS.USERS).document(userId)
 
@@ -391,6 +388,8 @@ class FirebaseModel {
             }
     }
 
-
+    fun getCurrentUser(): FirebaseUser? {
+        return auth.currentUser
+    }
 
 }
