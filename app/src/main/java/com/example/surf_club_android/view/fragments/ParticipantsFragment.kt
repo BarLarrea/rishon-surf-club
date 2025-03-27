@@ -31,7 +31,7 @@ class ParticipantsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[ParticipantsViewModel::class.java]
 
-        postId = args.postId // ✅ no nullable worries
+        postId = args.postId
         viewModel.loadParticipants(postId)
 
         setupRecyclerView()
