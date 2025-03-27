@@ -34,12 +34,17 @@ class EditUserProfileFragment : Fragment() {
             try {
                 @Suppress("DEPRECATION")
                 val bitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, uri)
-                binding.ivProfile.setImageBitmap(bitmap)
+                Glide.with(this)
+                    .load(bitmap)
+                    .placeholder(R.drawable.ic_profile_placeholder)
+                    .circleCrop()
+                    .into(binding.ivProfile)
                 selectedImage = bitmap
             } catch (e: Exception) {
                 Toast.makeText(context, "Failed to load image", Toast.LENGTH_SHORT).show()
             }
         }
+
     }
 
     override fun onCreateView(
@@ -121,6 +126,7 @@ class EditUserProfileFragment : Fragment() {
         Glide.with(this)
             .load(user.profileImageUrl)
             .placeholder(R.drawable.ic_profile_placeholder)
+            .circleCrop()
             .into(binding.ivProfile)
     }
 

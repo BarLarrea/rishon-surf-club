@@ -67,8 +67,16 @@ class UserProfileFragment : Fragment() {
                 val action = UserProfileFragmentDirections.actionProfileFragmentToUpdatePostFragment(post.id)
                 findNavController().navigate(action)
             },
-            onCreatorImageClick = {}
+            onParticipantsClick = { post ->
+                val action = UserProfileFragmentDirections.actionProfileFragmentToParticipantsFragment(post.id)
+                findNavController().navigate(action)
+            },
+            onCreatorImageClick = { userId ->
+                val action = UserProfileFragmentDirections.actionProfileFragmentToUserProfileFragment(userId)
+                findNavController().navigate(action)
+            }
         )
+
         binding.sessionsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter
@@ -94,6 +102,7 @@ class UserProfileFragment : Fragment() {
                     .load(it.profileImageUrl)
                     .placeholder(R.drawable.ic_person)
                     .error(R.drawable.ic_person)
+                    .circleCrop()
                     .into(binding.profileImage)
 
                 val isCurrentUser = it.id == FirebaseAuth.getInstance().currentUser?.uid

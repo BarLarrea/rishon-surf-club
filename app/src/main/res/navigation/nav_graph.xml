@@ -61,6 +61,9 @@
         <action
             android:id="@+id/action_profileFragment_to_updatePostFragment"
             app:destination="@id/updatePostFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
         <argument
             android:name="userId"
             app:argType="string"
