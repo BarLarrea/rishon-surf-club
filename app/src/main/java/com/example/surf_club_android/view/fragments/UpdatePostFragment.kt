@@ -79,7 +79,7 @@ class UpdatePostFragment : Fragment() {
                 .placeholder(R.drawable.ic_upload_photo)
                 .into(ivPostImage)
             // Display the Post ID in the newly added TextView.
-            tvPostId.text = "Post ID: ${post.id}"
+//            tvPostId.text = "Post ID: ${post.id}"
         }
     }
 
