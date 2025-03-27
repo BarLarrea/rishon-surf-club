@@ -4,6 +4,7 @@ circleimageview = "3.1.0"
 compiler = "4.15.1"
 converterGson = "2.11.0"
 converterGsonVersion = "2.9.0"
+coreKtxVersion = "1.12.0"
 firebaseBom = "33.9.0"
 generativeai = "0.9.0"
 glide = "4.16.0"
@@ -38,6 +39,7 @@ markwon = "4.6.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-ktx-v1120 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
 androidx-navigation-safe-args-gradle-plugin = { module = "androidx.navigation:navigation-safe-args-gradle-plugin", version.ref = "navigationSafeArgsGradlePlugin" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }

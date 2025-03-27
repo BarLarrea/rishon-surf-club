@@ -2,6 +2,7 @@ package com.example.surf_club_android.model.network
 
 import android.util.Log
 import com.example.surf_club_android.BuildConfig
+import com.google.gson.Gson
 import com.google.gson.JsonParser
 import okhttp3.*
 import kotlinx.coroutines.Dispatchers
@@ -10,25 +11,33 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.concurrent.TimeUnit
 
-
 class GeminiService {
     private val apiKey = BuildConfig.GEMINI_API_KEY
     private val apiUrl = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent?key=$apiKey"
     private val httpClient = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS) // Set connection timeout
-        .readTimeout(30, TimeUnit.SECONDS) // Set read timeout
-        .writeTimeout(30, TimeUnit.SECONDS) // Set write timeout
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(30, TimeUnit.SECONDS)
         .build()
 
-    suspend fun sendMessage(userPrompt: String): String {
+    private val gson = Gson()
+
+    suspend fun sendMessage(userPrompt: String, messageHistory: List<String>): String {
         return withContext(Dispatchers.IO) {
             try {
+                val messages = mutableListOf<Map<String, Any>>()
+                messageHistory.forEach { message ->
+                    val role = if (message.startsWith("User:")) "user" else "model"
+                    val text = message.substringAfter(": ")
+                    messages.add(mapOf("parts" to listOf(mapOf("text" to text)), "role" to role))
+                }
+                messages.add(mapOf("parts" to listOf(mapOf("text" to userPrompt)), "role" to "user"))
+
                 val requestBody = """
                     {
-                        "contents": [{"parts": [{"text": "$userPrompt"}]}]
+                        "contents": ${gson.toJson(messages)}
                     }
                 """.trimIndent()
-                httpClient
 
                 Log.d("GeminiService", "API Request: $requestBody")
 
@@ -60,5 +69,4 @@ class GeminiService {
             }
         }
     }
-
 }

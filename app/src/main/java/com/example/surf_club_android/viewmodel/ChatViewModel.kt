@@ -45,7 +45,7 @@ class ChatViewModel(private val geminiService: GeminiService) : ViewModel() {
         // Send the system prompt to Gemini without handling the response
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                geminiService.sendMessage(systemPrompt)
+                geminiService.sendMessage(systemPrompt, messageHistory)
             } catch (e: Exception) {
                 Log.e("chat", "Error: ${e.message}")
                 _response.postValue("Sorry, I'm having trouble connecting right now. Please try again later.")
@@ -56,13 +56,14 @@ class ChatViewModel(private val geminiService: GeminiService) : ViewModel() {
     fun sendMessage(userMessage: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                messageHistory.add("User: $userMessage") // Add user message to history
+                messageHistory.add("User: $userMessage")
                 val conversation = buildConversation()
-                val result = geminiService.sendMessage(conversation)
-                messageHistory.add("Kelly: $result") // Add Kelly's response to history
+                val result = geminiService.sendMessage(conversation, messageHistory)
+                messageHistory.add("Kelly: $result")
                 _response.postValue(result)
             } catch (e: Exception) {
-                _response.postValue("Error: ${e.message}")
+                Log.e("chat", "API Error: ${e.message}", e)
+                _response.postValue("Sorry, something went wrong. Please try again later.")
             }
         }
     }
