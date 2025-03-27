@@ -23,10 +23,12 @@
         <action
             android:id="@+id/action_homeFragment_to_participantsFragment"
             app:destination="@id/participantsFragment" />
-        <!-- Added action to update post -->
         <action
             android:id="@+id/action_homeFragment_to_updatePostFragment"
             app:destination="@id/updatePostFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
     </fragment>
 
     <fragment

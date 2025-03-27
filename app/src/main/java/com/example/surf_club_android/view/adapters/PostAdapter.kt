@@ -1,4 +1,3 @@
-
 package com.example.surf_club_android.view.adapters
 
 import android.annotation.SuppressLint
@@ -26,7 +25,8 @@ class PostAdapter(
     private val isProfileView: Boolean,
     private val onPostRemoved: ((String) -> Unit)? = null,
     private val onUpdate: ((Post) -> Unit)? = null,
-    private val onParticipantsClick: ((Post) -> Unit)? = null
+    private val onParticipantsClick: ((Post) -> Unit)? = null,
+    private val onCreatorImageClick: (String) -> Unit
 ) : ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -42,11 +42,12 @@ class PostAdapter(
             isProfileView = isProfileView,
             onPostRemoved = onPostRemoved,
             onUpdate = onUpdate,
-            onParticipantsClick = onParticipantsClick
+            onParticipantsClick = onParticipantsClick,
+            onCreatorImageClick = onCreatorImageClick
         )
     }
-
     class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+
         @SuppressLint("SetTextI18n")
         fun bind(
             post: Post,
@@ -54,7 +55,8 @@ class PostAdapter(
             isProfileView: Boolean,
             onPostRemoved: ((String) -> Unit)?,
             onUpdate: ((Post) -> Unit)?,
-            onParticipantsClick: ((Post) -> Unit)?
+            onParticipantsClick: ((Post) -> Unit)?,
+            onCreatorImageClick: (String) -> Unit
         ) {
             binding.apply {
                 UserRepository.shared.getUser(post.author) { user ->
@@ -79,7 +81,10 @@ class PostAdapter(
                         .circleCrop()
                         .into(ivHostProfile)
 
-                    //check if the current user is the author of the post
+                    ivHostProfile.setOnClickListener {
+                        onCreatorImageClick(user.id)
+                    }
+
                     val isOwner = post.author == currentUserId
                     btnUpdate.visibility = if (isOwner) View.VISIBLE else View.GONE
                     btnDelete.visibility = if (isOwner) View.VISIBLE else View.GONE

@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentUserProfileBinding
-import com.example.surf_club_android.model.repositories.UserRepository
 import com.example.surf_club_android.view.adapters.PostAdapter
 import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -28,7 +27,6 @@ class UserProfileFragment : Fragment() {
     private lateinit var viewModel: UserProfileViewModel
     private lateinit var postAdapter: PostAdapter
 
-    // ✅ קבלת userId שהועבר דרך SafeArgs (אם קיים)
     private val args: UserProfileFragmentArgs by navArgs()
 
     private lateinit var loadedUserId: String
@@ -42,17 +40,13 @@ class UserProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[UserProfileViewModel::class.java]
 
-        // ✅ קובע איזה userId לטעון: או מהניווט, או המשתמש הנוכחי
-        loadedUserId = if (args.userId.isNotEmpty()) {
-            args.userId
-        } else {
+        loadedUserId = args.userId.ifEmpty {
             FirebaseAuth.getInstance().currentUser?.uid ?: return
         }
 
         viewModel.loadUser(loadedUserId)
         viewModel.loadUserSessions(loadedUserId)
 
-        // רענון לאחר עדכון פוסט
         parentFragmentManager.setFragmentResultListener("postUpdated", viewLifecycleOwner) { _, _ ->
             viewModel.loadUserSessions(loadedUserId)
         }
@@ -73,10 +67,7 @@ class UserProfileFragment : Fragment() {
                 val action = UserProfileFragmentDirections.actionProfileFragmentToUpdatePostFragment(post.id)
                 findNavController().navigate(action)
             },
-            onParticipantsClick = { post ->
-                val action = UserProfileFragmentDirections.actionProfileFragmentToParticipantsFragment(post.id)
-                findNavController().navigate(action)
-            }
+            onCreatorImageClick = {}
         )
         binding.sessionsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -105,11 +96,9 @@ class UserProfileFragment : Fragment() {
                     .error(R.drawable.ic_person)
                     .into(binding.profileImage)
 
-                // ✅ הסתרת כפתור עריכה אם זה לא המשתמש הנוכחי
                 val isCurrentUser = it.id == FirebaseAuth.getInstance().currentUser?.uid
                 binding.editProfileButton.visibility = if (isCurrentUser) View.VISIBLE else View.GONE
 
-                // רענון סשנים
                 viewModel.loadUserSessions(it.id)
             }
         }

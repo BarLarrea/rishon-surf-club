@@ -52,6 +52,10 @@ class HomeFragment : Fragment() {
             onParticipantsClick = { post ->
                 val action = HomeFragmentDirections.actionHomeFragmentToParticipantsFragment(post.id)
                 findNavController().navigate(action)
+            },
+            onCreatorImageClick = { userId -> // ✅ חדש
+                val action = HomeFragmentDirections.actionHomeFragmentToUserProfileFragment(userId)
+                findNavController().navigate(action)
             }
         )
         binding.recyclerViewPosts.apply {
