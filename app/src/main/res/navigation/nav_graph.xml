@@ -59,6 +59,10 @@
         <action
             android:id="@+id/action_profileFragment_to_updatePostFragment"
             app:destination="@id/updatePostFragment" />
+        <argument
+            android:name="userId"
+            app:argType="string"
+            android:defaultValue="" />
     </fragment>
 
     <fragment
@@ -104,6 +108,9 @@
         android:name="com.example.surf_club_android.view.fragments.ParticipantsFragment"
         android:label="Participants"
         tools:layout="@layout/fragment_participant_list">
+        <action
+            android:id="@+id/action_participantsFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
         <argument
             android:name="postId"
             app:argType="string" />
