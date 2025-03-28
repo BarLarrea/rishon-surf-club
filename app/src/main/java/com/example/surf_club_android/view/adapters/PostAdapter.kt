@@ -1,7 +1,7 @@
-
-package com.example.surf_club_android.view.fragments.adapters
+package com.example.surf_club_android.view.adapters
 
 import android.annotation.SuppressLint
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,8 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.ItemPostBinding
-import com.example.surf_club_android.model.Model
-import com.example.surf_club_android.model.Post
+import com.example.surf_club_android.model.repositories.PostRepository
+import com.example.surf_club_android.model.repositories.UserRepository
+import com.example.surf_club_android.model.schemas.Post
 import com.example.surf_club_android.viewmodel.HomeViewModel
 import com.example.surf_club_android.viewmodel.UserProfileViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -24,7 +25,8 @@ class PostAdapter(
     private val isProfileView: Boolean,
     private val onPostRemoved: ((String) -> Unit)? = null,
     private val onUpdate: ((Post) -> Unit)? = null,
-    private val onParticipantsClick: ((Post) -> Unit)? = null
+    private val onParticipantsClick: ((Post) -> Unit)? = null,
+    private val onCreatorImageClick: (String) -> Unit
 ) : ListAdapter<Post, PostAdapter.PostViewHolder>(PostDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -40,11 +42,12 @@ class PostAdapter(
             isProfileView = isProfileView,
             onPostRemoved = onPostRemoved,
             onUpdate = onUpdate,
-            onParticipantsClick = onParticipantsClick
+            onParticipantsClick = onParticipantsClick,
+            onCreatorImageClick = onCreatorImageClick
         )
     }
-
     class PostViewHolder(private val binding: ItemPostBinding) : RecyclerView.ViewHolder(binding.root) {
+
         @SuppressLint("SetTextI18n")
         fun bind(
             post: Post,
@@ -52,12 +55,13 @@ class PostAdapter(
             isProfileView: Boolean,
             onPostRemoved: ((String) -> Unit)?,
             onUpdate: ((Post) -> Unit)?,
-            onParticipantsClick: ((Post) -> Unit)?
+            onParticipantsClick: ((Post) -> Unit)?,
+            onCreatorImageClick: (String) -> Unit
         ) {
             binding.apply {
-                Model.shared.getUser(post.author) { user ->
+                UserRepository.shared.getUser(post.author) { user ->
                     if (user == null) {
-                        Log.e("PostAdapter", "❌ getUser returned null for authorId: ${post.author}")
+                        Log.e("PostAdapter", "getUser returned null for authorId: ${post.author}")
                         tvHostName.text = "Unknown Author"
 
                         Glide.with(ivHostProfile.context)
@@ -77,7 +81,10 @@ class PostAdapter(
                         .circleCrop()
                         .into(ivHostProfile)
 
-                    //check if the current user is the author of the post
+                    ivHostProfile.setOnClickListener {
+                        onCreatorImageClick(user.id)
+                    }
+
                     val isOwner = post.author == currentUserId
                     btnUpdate.visibility = if (isOwner) View.VISIBLE else View.GONE
                     btnDelete.visibility = if (isOwner) View.VISIBLE else View.GONE
@@ -88,7 +95,7 @@ class PostAdapter(
                         }
 
                         btnDelete.setOnClickListener {
-                            Model.shared.deletePost(post.id) { success ->
+                            PostRepository.shared.deletePost(post.id) { success ->
                                 if (success) {
                                     onPostRemoved?.invoke(post.id)
                                 }
@@ -122,7 +129,7 @@ class PostAdapter(
                     btnJoin.isEnabled = true
 
                     btnJoin.setOnClickListener {
-                        Model.shared.toggleSessionParticipation(currentUserId, post.id) { success, isJoining ->
+                        PostRepository.shared.toggleSessionParticipation(currentUserId, post.id) { success, isJoining ->
                             if (success) {
                                 btnJoin.text = if (isJoining) "Leave" else "Join"
                                 btnJoin.setTextColor(
@@ -132,6 +139,9 @@ class PostAdapter(
 
                                 if (isProfileView && !isJoining) {
                                     onPostRemoved?.invoke(post.id)
+
+                                    val fragmentManager = (itemView.context as? androidx.fragment.app.FragmentActivity)?.supportFragmentManager
+                                    fragmentManager?.setFragmentResult("shouldRefreshHome", Bundle())
                                 }
 
                                 val context = itemView.context

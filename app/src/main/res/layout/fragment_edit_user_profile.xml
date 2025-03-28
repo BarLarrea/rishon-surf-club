@@ -13,8 +13,8 @@
 
         <ImageView
             android:id="@+id/iv_profile"
-            android:layout_width="107dp"
-            android:layout_height="108dp"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
             android:layout_marginTop="24dp"
             android:contentDescription="@string/profile_picture"
             android:scaleType="centerCrop"

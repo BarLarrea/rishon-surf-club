@@ -1,10 +1,11 @@
-package com.example.surf_club_android
+package com.example.surf_club_android.view.activities
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.ActivityAuthBinding
 
 class AuthActivity : AppCompatActivity() {

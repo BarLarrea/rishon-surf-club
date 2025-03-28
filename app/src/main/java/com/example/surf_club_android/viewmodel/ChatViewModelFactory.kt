@@ -2,7 +2,7 @@ package com.example.surf_club_android.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.surf_club_android.network.GeminiService
+import com.example.surf_club_android.model.network.GeminiService
 
 class ChatViewModelFactory(private val geminiService: GeminiService) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

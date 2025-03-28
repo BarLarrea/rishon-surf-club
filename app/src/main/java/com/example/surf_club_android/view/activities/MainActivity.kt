@@ -1,4 +1,4 @@
-package com.example.surf_club_android
+package com.example.surf_club_android.view.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.ActivityMainBinding
-import com.example.surf_club_android.model.Model
+import com.example.surf_club_android.model.repositories.UserRepository
+import com.example.surf_club_android.NavGraphDirections
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,16 +37,16 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomNavigation() {
         binding.bottomNavigation.apply {
             findViewById<ImageView>(R.id.homeButton)?.setOnClickListener {
-                navController.navigate(R.id.homeFragment)
+                navController.navigate(NavGraphDirections.actionGlobalHomeFragment())
             }
             findViewById<ImageView>(R.id.chatButton)?.setOnClickListener {
-                navController.navigate(R.id.chatFragment)
+                navController.navigate(NavGraphDirections.actionGlobalChatFragment())
             }
             findViewById<ImageView>(R.id.profileButton)?.setOnClickListener {
-                navController.navigate(R.id.profileFragment)
+                navController.navigate(NavGraphDirections.actionGlobalProfileFragment())
             }
             findViewById<ImageView>(R.id.createPostButton)?.setOnClickListener {
-                navController.navigate(R.id.createPostFragment)
+                navController.navigate(NavGraphDirections.actionGlobalCreatePostFragment())
             }
         }
     }
@@ -65,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                     .setTitle("Logout")
                     .setMessage("Are you sure you want to log out?")
                     .setPositiveButton("Yes") { _, _ ->
-                        Model.shared.signOut()
+                        UserRepository.shared.signOut()
                         val intent = Intent(this, AuthActivity::class.java)
                         startActivity(intent)
                         finish()

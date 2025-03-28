@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.surf_club_android.model.Post
+import com.example.surf_club_android.model.schemas.Post
 
 @Dao
 interface PostDao {

@@ -1,4 +1,4 @@
-package com.example.surf_club_android.view.fragments.adapters
+package com.example.surf_club_android.view.adapters
 
 import android.view.LayoutInflater
 import android.view.View

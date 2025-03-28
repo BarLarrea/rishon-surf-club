@@ -6,16 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.surf_club_android.AuthActivity
+import com.example.surf_club_android.view.activities.AuthActivity
 import com.example.surf_club_android.databinding.FragmentLoginBinding
-import com.example.surf_club_android.model.Model
 import androidx.navigation.fragment.findNavController
 import com.example.surf_club_android.R
+import com.example.surf_club_android.model.repositories.UserRepository
 
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
-    private val binding get() = _binding!!
+    private val binding get() = _binding?: throw IllegalStateException("View binding is null")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +45,7 @@ class LoginFragment : Fragment() {
         val password = binding.etPassword.text.toString()
 
         if (email.isNotBlank() && password.isNotBlank()) {
-            Model.shared.signIn(email, password) { firebaseUser, error ->
+            UserRepository.shared.signIn(email, password) { firebaseUser, error ->
                 activity?.runOnUiThread {
                     if (firebaseUser != null) {
                         // Login successful, navigate to MainActivity
