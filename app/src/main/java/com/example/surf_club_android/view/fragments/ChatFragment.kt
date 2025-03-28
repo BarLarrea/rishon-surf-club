@@ -1,6 +1,6 @@
 package com.example.surf_club_android.view.fragments
 
-import com.example.surf_club_android.view.fragments.adapters.ChatAdapter
+import com.example.surf_club_android.view.adapters.ChatAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentChatWithKellyBinding
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.surf_club_android.network.GeminiService
+import com.example.surf_club_android.model.network.GeminiService
 import com.example.surf_club_android.viewmodel.ChatViewModel
 import com.example.surf_club_android.viewmodel.ChatViewModelFactory
 

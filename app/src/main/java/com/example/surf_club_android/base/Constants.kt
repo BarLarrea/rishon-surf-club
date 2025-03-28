@@ -1,7 +1,7 @@
 package com.example.surf_club_android.base
 
-import com.example.surf_club_android.model.Post
-import com.example.surf_club_android.model.User
+import com.example.surf_club_android.model.schemas.Post
+import com.example.surf_club_android.model.schemas.User
 
 typealias PostsCallback = (List<Post>) -> Unit
 typealias EmptyCallback = () -> Unit

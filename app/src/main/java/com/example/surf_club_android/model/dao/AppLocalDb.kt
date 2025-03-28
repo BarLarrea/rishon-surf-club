@@ -4,8 +4,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.surf_club_android.base.MyApplication
-import com.example.surf_club_android.model.Post
-import com.example.surf_club_android.model.User
+import com.example.surf_club_android.model.schemas.Post
+import com.example.surf_club_android.model.schemas.User
 
 
 @Database(entities = [Post::class, User::class], version = 5)

@@ -3,8 +3,8 @@ package com.example.surf_club_android.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.surf_club_android.model.Model
-import com.example.surf_club_android.model.Post
+import com.example.surf_club_android.model.schemas.Post
+import com.example.surf_club_android.model.repositories.PostRepository
 
 class HomeViewModel : ViewModel() {
 
@@ -23,7 +23,7 @@ class HomeViewModel : ViewModel() {
 
     fun loadPosts() {
         _isLoading.value = true
-        Model.shared.getUpcomingPosts { posts ->
+        PostRepository.shared.getUpcomingPosts { posts ->
             _isLoading.postValue(false)
             if (posts.isNotEmpty()) {
                 _posts.postValue(posts)

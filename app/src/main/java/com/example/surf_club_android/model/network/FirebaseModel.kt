@@ -1,4 +1,4 @@
-package com.example.surf_club_android.model
+package com.example.surf_club_android.model.network
 
 
 import android.graphics.Bitmap
@@ -13,10 +13,11 @@ import com.example.surf_club_android.base.EmptyCallback
 import com.example.surf_club_android.base.PostsCallback
 import com.example.surf_club_android.base.SuccessCallback
 import com.example.surf_club_android.base.UsersCallback
+import com.example.surf_club_android.model.schemas.Post
+import com.example.surf_club_android.model.schemas.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.SetOptions
 import java.io.ByteArrayOutputStream
 
 class FirebaseModel {
@@ -38,7 +39,6 @@ class FirebaseModel {
             isFirestoreConfigured = true
         }
     }
-
 
     fun getAllPosts(callback: PostsCallback) {
         database.collection(Constants.COLLECTIONS.POSTS)
@@ -92,7 +92,6 @@ class FirebaseModel {
                 }
         }
     }
-
 
     fun getLastFourPosts(callback: PostsCallback) {
         database.collection(Constants.COLLECTIONS.POSTS)
@@ -288,7 +287,6 @@ class FirebaseModel {
     }
 
 
-
     fun addSessionToUser(userId: String, sessionId: String, callback: (Boolean) -> Unit) {
         val userRef = database.collection(Constants.COLLECTIONS.USERS).document(userId)
 
@@ -390,6 +388,8 @@ class FirebaseModel {
             }
     }
 
-
+    fun getCurrentUser(): FirebaseUser? {
+        return auth.currentUser
+    }
 
 }

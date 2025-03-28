@@ -4,8 +4,8 @@ import android.graphics.Bitmap
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.surf_club_android.model.Model
-import com.example.surf_club_android.model.User
+import com.example.surf_club_android.model.repositories.UserRepository
+import com.example.surf_club_android.model.schemas.User
 import com.google.firebase.auth.FirebaseAuth
 
 class EditUserProfileViewModel : ViewModel() {
@@ -27,7 +27,7 @@ class EditUserProfileViewModel : ViewModel() {
         val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
         if (currentUserId != null) {
-            Model.shared.getUser(currentUserId) { user ->
+            UserRepository.shared.getUser(currentUserId) { user ->
                 if (user != null) {
                     _user.postValue(user)
                 } else {
@@ -47,7 +47,7 @@ class EditUserProfileViewModel : ViewModel() {
 
         if (currentUser != null) {
             if (newProfileImage != null) {
-                Model.shared.uploadProfileImage(newProfileImage, currentUser.uid) { imageUrl ->
+                UserRepository.shared.uploadProfileImage(newProfileImage, currentUser.uid) { imageUrl ->
                     if (imageUrl != null) {
                         val userWithNewImage = updatedUser.copy(profileImageUrl = imageUrl)
                         updateUserData(userWithNewImage)
@@ -66,7 +66,7 @@ class EditUserProfileViewModel : ViewModel() {
     }
 
     private fun updateUserData(updatedUser: User) {
-        Model.shared.updateUser(updatedUser) { success ->
+        UserRepository.shared.updateUser(updatedUser) { success ->
             if (success) {
                 _saveSuccess.postValue(true)
             } else {

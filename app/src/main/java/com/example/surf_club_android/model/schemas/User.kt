@@ -1,4 +1,4 @@
-package com.example.surf_club_android.model
+package com.example.surf_club_android.model.schemas
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

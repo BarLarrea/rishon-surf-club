@@ -116,6 +116,8 @@ android {
         implementation(libs.okhttp)
         implementation(libs.logging.interceptor)
         implementation(libs.ktor.serialization.gson)
+        implementation(libs.androidx.core.ktx.v1120)
+
 
         // Coroutines
         implementation(libs.kotlinx.coroutines.core)

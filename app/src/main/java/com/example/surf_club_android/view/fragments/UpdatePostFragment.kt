@@ -18,8 +18,8 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentUpdatePostBinding
-import com.example.surf_club_android.model.Model
-import com.example.surf_club_android.model.Post
+import com.example.surf_club_android.model.repositories.PostRepository
+import com.example.surf_club_android.model.schemas.Post
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -52,7 +52,7 @@ class UpdatePostFragment : Fragment() {
         val postId = args.postId
         this.postId = postId
 
-        Model.shared.getPostById(postId) { fetchedPost:Post? ->
+        PostRepository.shared.getPostById(postId) { fetchedPost: Post? ->
             if (fetchedPost == null) {
                 Log.e("UpdatePostFragment", "Post with ID $postId not found.")
                 Toast.makeText(requireContext(), "Post not found", Toast.LENGTH_SHORT).show()
@@ -79,7 +79,7 @@ class UpdatePostFragment : Fragment() {
                 .placeholder(R.drawable.ic_upload_photo)
                 .into(ivPostImage)
             // Display the Post ID in the newly added TextView.
-            tvPostId.text = "Post ID: ${post.id}"
+//            tvPostId.text = "Post ID: ${post.id}"
         }
     }
 
@@ -129,7 +129,7 @@ class UpdatePostFragment : Fragment() {
             // Convert the selected image URI to a Bitmap if available.
             val bitmap: Bitmap? = selectedImageUri?.let { uri -> getBitmapFromUri(uri) }
 
-            Model.shared.updatePost(updatedPost, bitmap) { success ->
+            PostRepository.shared.updatePost(updatedPost, bitmap) { success ->
                 progressBar.visibility = View.GONE
                 btnUpdatePost.isEnabled = true
                 if (success) {

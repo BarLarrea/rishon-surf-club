@@ -1,4 +1,4 @@
-package com.example.surf_club_android
+package com.example.surf_club_android.view.activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.ActivityMainBinding
-import com.example.surf_club_android.model.Model
+import com.example.surf_club_android.model.repositories.UserRepository
+import com.example.surf_club_android.NavGraphDirections
 
 class MainActivity : AppCompatActivity() {
 
@@ -49,7 +51,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
@@ -66,7 +67,7 @@ class MainActivity : AppCompatActivity() {
                     .setTitle("Logout")
                     .setMessage("Are you sure you want to log out?")
                     .setPositiveButton("Yes") { _, _ ->
-                        Model.shared.signOut()
+                        UserRepository.shared.signOut()
                         val intent = Intent(this, AuthActivity::class.java)
                         startActivity(intent)
                         finish()

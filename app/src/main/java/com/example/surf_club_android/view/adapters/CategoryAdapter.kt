@@ -1,5 +1,6 @@
-package com.example.surf_club_android.view.fragments.adapters
+package com.example.surf_club_android.view.adapters
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -7,16 +8,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.surf_club_android.databinding.ItemCategoryBinding
-import com.example.surf_club_android.model.User
+import com.example.surf_club_android.model.schemas.User
 
-class CategoryAdapter : ListAdapter<Map.Entry<String, List<User>>, CategoryAdapter.CategoryViewHolder>(
-    DiffCallback()
-) {
+class CategoryAdapter(
+    private val onParticipantClick: (User) -> Unit
+) : ListAdapter<Map.Entry<String, List<User>>, CategoryAdapter.CategoryViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
-        val binding =
-            ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CategoryViewHolder(binding)
+        val binding = ItemCategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return CategoryViewHolder(binding, onParticipantClick)
     }
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
@@ -24,14 +24,22 @@ class CategoryAdapter : ListAdapter<Map.Entry<String, List<User>>, CategoryAdapt
         holder.bind(category, participants)
     }
 
-    class CategoryViewHolder(private val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(category: String, participants: List<User>) {
-            binding.categoryTitle.text = "$category (${participants.size})"
+    class CategoryViewHolder(
+        private val binding: ItemCategoryBinding,
+        private val onParticipantClick: (User) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-            val adapter = ParticipantAdapter()
+        private val adapter = ParticipantAdapter(onParticipantClick)
+
+        init {
             binding.participantsRecyclerView.layoutManager =
                 LinearLayoutManager(binding.root.context)
             binding.participantsRecyclerView.adapter = adapter
+        }
+
+        @SuppressLint("SetTextI18n")
+        fun bind(category: String, participants: List<User>) {
+            binding.categoryTitle.text = "$category (${participants.size})"
             adapter.submitList(participants)
         }
     }
@@ -41,6 +49,6 @@ class CategoryAdapter : ListAdapter<Map.Entry<String, List<User>>, CategoryAdapt
             oldItem.key == newItem.key
 
         override fun areContentsTheSame(oldItem: Map.Entry<String, List<User>>, newItem: Map.Entry<String, List<User>>) =
-            oldItem.value.size == newItem.value.size && oldItem.value.containsAll(newItem.value)
+            oldItem.value == newItem.value
     }
 }

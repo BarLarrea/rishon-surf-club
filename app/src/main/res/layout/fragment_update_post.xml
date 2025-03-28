@@ -9,76 +9,82 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
+        <!-- Post Image -->
         <ImageView
             android:id="@+id/ivPostImage"
             android:layout_width="0dp"
-            android:layout_height="200dp"
+            android:layout_height="220dp"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_upload_photo"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Update Image Button -->
         <Button
             android:id="@+id/btnUpdateImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Update Image"
             android:backgroundTint="#7B8CDE"
+            app:layout_constraintTop_toBottomOf="@id/ivPostImage"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivPostImage" />
+            android:layout_marginTop="8dp" />
 
-        <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Post Date: "
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnUpdateImage" />
-
-        <TextView
-            android:id="@+id/tvSessionDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Session Date: "
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvDate" />
-
-        <!-- Added TextView for Post ID -->
+        <!-- Post ID (hidden) -->
         <TextView
             android:id="@+id/tvPostId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Post ID: "
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvSessionDate" />
+            android:visibility="gone"
+            android:text="Post ID: 123456"
+            app:layout_constraintTop_toBottomOf="@id/btnUpdateImage"
+            app:layout_constraintStart_toStartOf="parent" />
 
+        <!-- Post Date -->
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Post Date: "
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/tvPostId"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <!-- Session Date -->
+        <TextView
+            android:id="@+id/tvSessionDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Session Date: "
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/tvDate"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <!-- Select Date Button -->
         <Button
             android:id="@+id/btnUpdateSessionDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="128dp"
             android:text="Update Date"
             android:backgroundTint="#7B8CDE"
+            app:layout_constraintTop_toTopOf="@id/tvSessionDate"
             app:layout_constraintBottom_toBottomOf="@id/tvSessionDate"
             app:layout_constraintStart_toEndOf="@id/tvSessionDate"
-            app:layout_constraintTop_toTopOf="@id/tvSessionDate"
-            app:layout_constraintVertical_bias="1.0" />
+            android:layout_marginStart="12dp" />
 
+        <!-- Wave Height -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilWaveHeight"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvSessionDate"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvPostId">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etWaveHeight"
@@ -87,14 +93,15 @@
                 android:hint="Wave Height" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Wind Speed -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilWindSpeed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilWaveHeight"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilWaveHeight">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etWindSpeed"
@@ -103,14 +110,15 @@
                 android:hint="Wind Speed" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Description -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilWindSpeed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilWindSpeed">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDescription"
@@ -121,6 +129,7 @@
                 android:lines="4" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Update Post Button -->
         <Button
             android:id="@+id/btnUpdatePost"
             android:layout_width="0dp"
@@ -128,19 +137,20 @@
             android:layout_marginTop="24dp"
             android:text="Update Post"
             android:backgroundTint="#7B8CDE"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilDescription"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilDescription" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Progress Bar -->
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

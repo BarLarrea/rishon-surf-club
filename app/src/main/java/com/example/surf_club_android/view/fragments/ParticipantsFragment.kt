@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.surf_club_android.R
-import com.example.surf_club_android.view.fragments.adapters.CategoryAdapter
+import com.example.surf_club_android.view.adapters.CategoryAdapter
 import com.example.surf_club_android.databinding.FragmentParticipantsBinding
 import com.example.surf_club_android.viewmodel.ParticipantsViewModel
 
@@ -30,8 +31,7 @@ class ParticipantsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[ParticipantsViewModel::class.java]
-
-        postId = args.postId // ✅ no nullable worries
+        postId = args.postId
         viewModel.loadParticipants(postId)
 
         setupRecyclerView()
@@ -39,7 +39,12 @@ class ParticipantsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        categoryAdapter = CategoryAdapter()
+        categoryAdapter = CategoryAdapter { user ->
+            val action = ParticipantsFragmentDirections
+                .actionParticipantsFragmentToUserProfileFragment(user.id)
+            findNavController().navigate(action)
+        }
+
         binding.categoriesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.categoriesRecyclerView.adapter = categoryAdapter
     }

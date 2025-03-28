@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.surf_club_android.R
 import com.example.surf_club_android.databinding.FragmentRegisterBinding
-import com.example.surf_club_android.model.Model
+import com.example.surf_club_android.model.repositories.UserRepository
 
 class RegisterFragment : Fragment() {
 
@@ -67,7 +67,7 @@ class RegisterFragment : Fragment() {
     }
 
     private fun uploadImageToCloudinary(bitmap: Bitmap, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
-        Model.shared.uploadImageToCloudinary(
+        UserRepository.shared.uploadImageToCloudinary(
             image = bitmap,
             name = System.currentTimeMillis().toString(),
             onSuccess = onSuccess,
@@ -93,7 +93,7 @@ class RegisterFragment : Fragment() {
             val bitmap = selectedImageUri?.let { getBitmapFromUri(it) }
 
             fun continueSignUp(imageBitmap: Bitmap?) {
-                Model.shared.signUp(email, password, firstName, lastName, role, imageBitmap) { firebaseUser, error ->
+                UserRepository.shared.signUp(email, password, firstName, lastName, role, imageBitmap) { firebaseUser, error ->
                     activity?.runOnUiThread {
                         binding.progressBar.visibility = View.GONE
                         binding.btnRegister.isEnabled = true

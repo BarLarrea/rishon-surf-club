@@ -1,4 +1,4 @@
-package com.example.surf_club_android
+package com.example.surf_club_android.view.activities
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.surf_club_android.R
 import com.example.surf_club_android.viewmodel.SplashViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
